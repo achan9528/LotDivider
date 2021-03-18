@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lot Divider</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Portfolio</th>
+                <th>Acccount</th>
+                <th>Security</th>
+                <th>Units</th>
+                <th>Total Cost</th>
+                <th>Acquisition Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for account in portfolio.accounts.all %}
+                {% for holding in account.holdings.all %}
+                    {% for lot in holding.taxLots.all %}
+                        <tr>
+                            <td>{{lot.holding.account.portfolio.number}}</td>
+                            <td>{{lot.holding.account.number}}</td>
+                            <td>{{lot.holding.security.name}}</td>
+                            <td>{{lot.units}}</td>
+                            <td>{{lot.totalFederalCost}}</td>
+                            <td>{{lot.acquisitionDate}}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
