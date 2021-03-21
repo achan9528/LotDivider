@@ -1,5 +1,7 @@
+from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from .models import *
+from .services import *
 
 # Create your views here.
 def index(request):
@@ -25,10 +27,24 @@ def addPortfolio(request):
             )
             return redirect('/')
 
+def viewAccountHoldings(request):
+    if request.method=='GET':
+        context = {
+            "account": Account.objects.first(),
+            "holdings" : getHoldings(Account.objects.first().id),
+            "orderedHoldings": getHoldings(Account.objects.first().id).sort(key=lambda x:x["name"])
+        }
+        return render(request, "holdings.html", context)
+
 def viewLots(request):
     if request.method=='GET':        
         context = {
             "portfolio":Portfolio.objects.first()
         }
         return render(request, "lots.html", context)
+
+def split(request):
+    if request.method=='GET':
+        getShares()
+        return HttpResponse("test")
 

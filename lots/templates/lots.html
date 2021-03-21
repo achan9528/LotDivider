@@ -10,8 +10,10 @@
     <table>
         <thead>
             <tr>
-                <th>Portfolio</th>
-                <th>Acccount</th>
+                <th>Portfolio Number</th>
+                <th>Portfolio Name</th>
+                <th>Acccount Number</th>
+                <th>Acccount Name</th>
                 <th>Security</th>
                 <th>Units</th>
                 <th>Total Cost</th>
@@ -24,7 +26,9 @@
                     {% for lot in holding.taxLots.all %}
                         <tr>
                             <td>{{lot.holding.account.portfolio.number}}</td>
+                            <td>{{lot.holding.account.portfolio.name}}</td>
                             <td>{{lot.holding.account.number}}</td>
+                            <td>{{lot.holding.account.name}}</td>
                             <td>{{lot.holding.security.name}}</td>
                             <td>{{lot.units}}</td>
                             <td>{{lot.totalFederalCost}}</td>
