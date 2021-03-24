@@ -46,5 +46,5 @@ def viewLots(request):
 def split(request):
     if request.method=='GET':
         getShares()
-        return HttpResponse("test")
+        return HttpResponse("test")  
 

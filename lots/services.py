@@ -25,7 +25,7 @@ def getHoldings(accountID):
     return holdings
 
 
-def getShares(method="HIFO", targetShares=2, holding=Holding.objects.get(security=Security.objects.get(ticker="AMC"), account=Account.objects.first())):
+def getShares(method="HIFO", targetShares=2, holding=Holding.objects.get(security=Security.objects.get(ticker="AMC"))):
     # restrictions when you are splitting positions
     # you cannot simply deplete lots and then switch to the
     # next recipient because you wouldn't be passing on the gains
@@ -69,5 +69,34 @@ def getShares(method="HIFO", targetShares=2, holding=Holding.objects.get(securit
     print(currentLots)
     return [returnLots, currentLots]
 
-def get():
+# def get():
+    # determine how many portfolios you will need
+    # to split the portfolio into
+
+    # determine how many shares for each holding you
+    # will need
+
+    # determine who will get any extra lots
+
+    # determine which lots you will use
+
+    # split
+
+    # update the portfolio with the remaining share
+    # information
+
+# targets = dictionary object which has all of the information
+# needed to split the portfolio in the target ones
+def divideHoldings(targets):
+    # nested dictionaries to build the portfolios, like
+    # how I did it in VBA
+    # a dictionary within a dictionary so the step before 
+    # it is important because it will calculate the shares
+    # needed in all portfolios, then you can pass
+    # that target dictionary into the function
+
+
+    # pass the targets in through the forms
+    # this is the main function which will call other
+    # functions
     return null
