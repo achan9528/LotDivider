@@ -2,12 +2,12 @@ from django.http import HttpResponse
 from django.shortcuts import render, redirect
 from decimal import Decimal
 from .models import *
-from . import services
+from . import services as LotService
 
 # Create your views here.
 def index(request):
     if request.method=='GET':
-        request.session['portfolioID'] = Portfolio.objects.first().id
+        request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
         context = {
             
         }
@@ -88,10 +88,8 @@ def addHolding(request):
         # else:
             newHolding = Holding.objects.create(
                 security = Security.objects.get(ticker=request.POST['holdingTicker']),
-                account = Account.objects.get(
-                    number=Portfolio.objects.get(
-                        request.session['portfolioID']).accounts.get(
-                            name=request.POST['holdingAcount']).number)
+                account = Portfolio.objects.get(id=request.session['portfolioID']).accounts.get(
+                            name=request.POST['holdingAccount'])
             )
             return redirect('/')
 
@@ -107,7 +105,7 @@ def addLot(request):
             newLot = TaxLot.objects.create(
                 holding = Holding.objects.get(
                     security=Security.objects.get(ticker=request.POST['ticker']),
-                    account=Account.objects.get(number=Portfolio.objects.get(name="alex").accounts.get(name="alex's first account").number)
+                    account=Portfolio.objects.get(name="alex").accounts.get(name="testAccount")
                 ), units = request.POST['units'],
                 totalFederalCost = request.POST['totalFederalCost'],
                 totalStateCost = request.POST['totalStateCost'],
@@ -149,7 +147,7 @@ def split(request):
             if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
                 if Decimal(request.POST[holding.security.ticker]) > 0:
                     holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
-        returnDict = splitPortfolio(
+        returnDict = LotService.splitPortfolio(
             accountID=request.session['accountID'],
             method=request.POST["method"],
             numberOfPortfolios=request.POST["numberOfPortfolios"],
