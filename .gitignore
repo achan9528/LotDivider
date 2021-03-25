@@ -1,4 +1,7 @@
 */__pycache__/*
+*/__init__.py/*
 lots/__pycache__
 lots/migrations
 db.sqlite3
+
+.gitignore
