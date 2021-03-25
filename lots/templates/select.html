@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lot Divider</title>
+</head>
+<body>
+    <form action="/portfolios/test" method="POST">
+        {% csrf_token %}
+        <table>
+            <thead>
+                <tr>
+                    {% comment %} <th>Acccount Number</th> {% endcomment %}
+                    <th>Acccount Name</th>
+                    <th>Security</th>
+                    <th>Units</th>
+                    <th>Total Cost</th>
+                    <th>Action</th>
+                    {% comment %} <th>Acquisition Date</th> {% endcomment %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for holding in holdings %}
+                <tr>
+                    {% comment %} <td>{{account.number}}</td> {% endcomment %}
+                    <td>{{account.name}}</td>
+                    <td>{{holding.ticker}}</td>
+                    <td>{{holding.totalUnits}}</td>
+                    <td>{{holding.totalFederalCost}}</td>
+                    <td><input name={{holding.ticker}}></input></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div>
+            <label for="numberOfPortfolios">Number of Portfolios</label>
+            <input value="2" placeholder="2" name="numberOfPortfolios"></input>
+        </div>
+        <div>
+            <label for="method">Method</label>
+            <input value="HIFO" placeholder="2" name="method"></input>
+        </div>
+        <button>Submit</button>
+    </form>
+</body>
+</html>

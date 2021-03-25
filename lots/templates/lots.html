@@ -10,7 +10,7 @@
     <table>
         <thead>
             <tr>
-                <th>Portfolio Number</th>
+                <th>Lot Number</th>
                 <th>Portfolio Name</th>
                 <th>Acccount Number</th>
                 <th>Acccount Name</th>
@@ -25,7 +25,7 @@
                 {% for holding in account.holdings.all %}
                     {% for lot in holding.taxLots.all %}
                         <tr>
-                            <td>{{lot.holding.account.portfolio.number}}</td>
+                            <td>{{lot.number}}</td>
                             <td>{{lot.holding.account.portfolio.name}}</td>
                             <td>{{lot.holding.account.number}}</td>
                             <td>{{lot.holding.account.name}}</td>

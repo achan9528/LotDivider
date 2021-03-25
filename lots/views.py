@@ -1,11 +1,13 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from decimal import Decimal
 from .models import *
-from .services import *
+from . import services
 
 # Create your views here.
 def index(request):
     if request.method=='GET':
+        request.session['portfolioID'] = Portfolio.objects.first().id
         context = {
             
         }
@@ -23,18 +25,114 @@ def addPortfolio(request):
         #     return redirect("/")
         # else:
             newPortfolio = Portfolio.objects.create(
-                name = request.POST['name']
+                name = request.POST['name'],
+                owner= User.objects.get(name="alex"),
+            )
+            return redirect('/')
+
+def addAccount(request):
+    print(request)
+    if request.method=='POST':
+        # errors = Portfolio.objects.portfolioValidator(request.POST)
+        # if len(errors) > 0:
+        #     for key,value in errors.items():
+        #         messages.error(request,value)
+        #     return redirect("/")
+        # else:
+            newAccount = Account.objects.create(
+                name = request.POST['accountName'],
+                portfolio = Portfolio.objects.get(name="alex"),
+            )
+            return redirect('/')
+
+def addProductType(request):
+    print(request)
+    if request.method=='POST':
+        # errors = Portfolio.objects.portfolioValidator(request.POST)
+        # if len(errors) > 0:
+        #     for key,value in errors.items():
+        #         messages.error(request,value)
+        #     return redirect("/")
+        # else:
+            newProducType = ProductType.objects.create(
+                name = request.POST['productTypeName'],
+                # fractionalLotsAllowed = boolean(request.POST['productTypeFractionalLotsAllowed'].lower()=='true'),
+            )
+            return redirect('/')
+
+def addSecurity(request):
+    print(request)
+    if request.method=='POST':
+        # errors = Portfolio.objects.portfolioValidator(request.POST)
+        # if len(errors) > 0:
+        #     for key,value in errors.items():
+        #         messages.error(request,value)
+        #     return redirect("/")
+        # else:
+            newSecurity = Security.objects.create(
+                name = request.POST['securityName'],
+                cusip = request.POST['securityCusip'],
+                ticker = request.POST['securityTicker'],
+                productType = ProductType.objects.get(name=request.POST['securityProductType'])
+            )
+            return redirect('/')
+
+def addHolding(request):
+    print(request)
+    if request.method=='POST':
+        # errors = Portfolio.objects.portfolioValidator(request.POST)
+        # if len(errors) > 0:
+        #     for key,value in errors.items():
+        #         messages.error(request,value)
+        #     return redirect("/")
+        # else:
+            newHolding = Holding.objects.create(
+                security = Security.objects.get(ticker=request.POST['holdingTicker']),
+                account = Account.objects.get(
+                    number=Portfolio.objects.get(
+                        request.session['portfolioID']).accounts.get(
+                            name=request.POST['holdingAcount']).number)
+            )
+            return redirect('/')
+
+def addLot(request):
+    print(request)
+    if request.method=='POST':
+        # errors = Portfolio.objects.portfolioValidator(request.POST)
+        # if len(errors) > 0:
+        #     for key,value in errors.items():
+        #         messages.error(request,value)
+        #     return redirect("/")
+        # else: 
+            newLot = TaxLot.objects.create(
+                holding = Holding.objects.get(
+                    security=Security.objects.get(ticker=request.POST['ticker']),
+                    account=Account.objects.get(number=Portfolio.objects.get(name="alex").accounts.get(name="alex's first account").number)
+                ), units = request.POST['units'],
+                totalFederalCost = request.POST['totalFederalCost'],
+                totalStateCost = request.POST['totalStateCost'],
             )
             return redirect('/')
 
 def viewAccountHoldings(request):
-    if request.method=='GET':
+    if request.method=='GET':        
         context = {
             "account": Account.objects.first(),
             "holdings" : getHoldings(Account.objects.first().id),
             "orderedHoldings": getHoldings(Account.objects.first().id).sort(key=lambda x:x["name"])
         }
         return render(request, "holdings.html", context)
+
+def viewSelectPage(request):
+    if request.method=='GET':
+        request.session["accountID"] = Account.objects.first().id
+        print(request.session["account"])
+        context = {
+            "account": Account.objects.first(),
+            "holdings" : getHoldings(Account.objects.first().id),
+            "orderedHoldings": getHoldings(Account.objects.first().id).sort(key=lambda x:x["name"])
+        }
+        return render(request, "select.html", context)
 
 def viewLots(request):
     if request.method=='GET':        
@@ -44,7 +142,21 @@ def viewLots(request):
         return render(request, "lots.html", context)
 
 def split(request):
-    if request.method=='GET':
-        getShares()
-        return HttpResponse("test")
+    if request.method=='POST':
+        print(request.POST)
+        holdingsDict = {}
+        for holding in Account.objects.get(id=request.session['account']).holdings.all():
+            if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
+                if Decimal(request.POST[holding.security.ticker]) > 0:
+                    holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
+        returnDict = splitPortfolio(
+            accountID=request.session['accountID'],
+            method=request.POST["method"],
+            numberOfPortfolios=request.POST["numberOfPortfolios"],
+            holdingsDict=holdingsDict,
+        )
+        return HttpResponse(returnDict)
 
+# def newProject(request):
+#     if request.method=='POST':
+        

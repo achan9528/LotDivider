@@ -16,16 +16,80 @@
         </div>
         <button>Submit</button>
     </form>
+    <form method="POST" action="/accounts/add">
+        {% csrf_token %}
+        <h2>Add Account</h2>
+        <div>
+            <label>Account Name</label>
+            <input type="text" name="accountName"></input>
+        </div>
+        <button>Submit</button>
+    </form>
+    <form method="POST" action="/productType/add">
+        {% csrf_token %}
+        <h2>Add Product Type</h2>
+        <div>
+            <label>Product Type Name</label>
+            <input type="text" name="productTypeName"></input>
+        </div>
+        <div>
+            <label>Product Type Fractional Lots Allowed</label>
+            <input type="text" name="productTypeFractionalLotsAllowed"></input>
+        </div>
+        <button>Submit</button>
+    </form>
+    <form method="POST" action="/security/add">
+        {% csrf_token %}
+        <h2>Add Security</h2>
+        <div>
+            <label>Ticker</label>
+            <input type="text" name="securityTicker"></input>
+        </div>
+        <div>
+            <label>CUSIP</label>
+            <input type="text" name="securityCusip"></input>
+        </div>
+        <div>
+            <label>Security Name</label>
+            <input type="text" name="securityName"></input>
+        </div>
+        <div>
+            <label>Product Type</label>
+            <input type="text" name="securityProductType"></input>
+        </div>
+        <button>Submit</button>
+    </form>
+    <form method="POST" action="/holding/add">
+        {% csrf_token %}
+        <h2>Add Holding</h2>
+        <div>
+            <label>Ticker</label>
+            <input type="text" name="holdingTicker"></input>
+        </div>
+        <div>
+            <label>Account</label>
+            <input type="text" name="holdingAccount"></input>
+        </div>
+        <button>Submit</button>
+    </form>
     <form method="POST" action="/lots/add">
         {% csrf_token %}
         <h2>Add Lot</h2>
         <div>
-            <label>Portfolio Name</label>
-            <input type="text" name="portfolioName"></input>
+            <label>Ticker</label>
+            <input type="text" name="ticker"></input>
         </div>
         <div>
-            <label>Portfolio Name</label>
-            <input type="text" name="portfolioName"></input>
+            <label>Units</label>
+            <input type="text" name="units"></input>
+        </div>
+        <div>
+            <label>totalFederalCost</label>
+            <input type="text" name="totalFederalCost"></input>
+        </div>
+        <div>
+            <label>totalStateCost</label>
+            <input type="text" name="totalStateCost"></input>
         </div>
         <button>Submit</button>
     </form>

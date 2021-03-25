@@ -1,4 +1,5 @@
 from .models import *
+from decimal import Decimal
 
 def getHoldings(accountID):
     holdings = []
@@ -24,8 +25,33 @@ def getHoldings(accountID):
     
     return holdings
 
+def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
+    
+    usedLots = {}
+    remainingLots = {}
 
-def getShares(method="HIFO", targetShares=2, holding=Holding.objects.get(security=Security.objects.get(ticker="AMC"), account=Account.objects.first())):
+    for ticker, targetShares in holdingsDict.items():
+        tempDict = getLots(
+            targetShares=targetShares,
+            holding= Holding.objects.get(security=Security.objects.get(ticker=ticker), account=Account.objects.get(id=accountID))
+        )
+
+        # debugging and print check
+        # print(ticker + "used lots:")
+        # print(returnDict["usedLots"])
+        # print("\n")
+
+        # print(ticker + "remaining lots:")
+        # print(returnDict["remainingLots"])
+        # print("\n")
+        
+        usedLots[ticker] = tempDict[usedLots]
+        remainingLots[ticker] = tempDict[remainingLots]
+    
+
+    return returnDict
+
+def getLots(method, targetShares, holding):
     # restrictions when you are splitting positions
     # you cannot simply deplete lots and then switch to the
     # next recipient because you wouldn't be passing on the gains
@@ -36,6 +62,7 @@ def getShares(method="HIFO", targetShares=2, holding=Holding.objects.get(securit
     currentLots = []
     currentShares = 0
     returnLots = []
+    targetShares = Decimal(targetShares)
 
     for lot in holding.taxLots.all():
         currentLots.append({
@@ -45,8 +72,8 @@ def getShares(method="HIFO", targetShares=2, holding=Holding.objects.get(securit
         })
     
     currentLots.sort(key=lambda x: x["cps"])
-    print(currentLots)
-    print("\n")
+    # print(currentLots)
+    # print("\n")
     while currentShares < targetShares:
         currentLot = currentLots[-1]
         if currentLot["units"] <= targetShares - currentShares:
@@ -64,10 +91,24 @@ def getShares(method="HIFO", targetShares=2, holding=Holding.objects.get(securit
             currentLots.append(temp)
             currentShares = targetShares
 
-    print(returnLots)
-    print("\n")
-    print(currentLots)
-    return [returnLots, currentLots]
+    # print(returnLots)
+    # print("\n")
+    # print(currentLots)
+
+    return {
+        "usedLots": returnLots,
+        "remainingLots": currentLots
+    }
 
 def get():
+    # select portfolio
+    # select account
+    # select holdings
+    # select how many portfolios you want to split it into
+    # select the optional stuff (HIFO, etc.)
+    # getShares function which chooses shares based off of the
+        # selections
+    # split the shares into the different portfolios
+    # save the portfolios as drafts
+
     return null

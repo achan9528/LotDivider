@@ -32,14 +32,28 @@ import uuid
 #             errors['password'] = "Password must be at least 8 characters!"
 #         return errors
 
-# class User(models.Model):
-#     name = models.CharField(max_length=255)
-#     alias = models.CharField(max_length=255)
-#     email = models.CharField(max_length=255)
-#     password = models.CharField(max_length=255)
-#     createdAt = models.DateTimeField(auto_now_add=True)
-#     updatedAt = models.DateTimeField(auto_now=True)
-#     objects = UserManager()
+class User(models.Model):
+    name = models.CharField(max_length=255)
+    alias = models.CharField(max_length=255)
+    email = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+    # objects = UserManager()
+
+    # projects 
+
+class Project(models.Model):
+    owners = models.ManyToManyField(User, related_name="projects")
+    name = models.CharField(max_length=50)
+    number = models.CharField(max_length=50, default=uuid.uuid4)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+    # draftPortfolios
+
+    def __str__(self):
+        return (f"Project Name: {self.name}, Project Number: {self.number}")
 
 class ProductType(models.Model):
     name = models.CharField(max_length=255)
@@ -66,12 +80,24 @@ class Security(models.Model):
 class Portfolio(models.Model):
     name = models.CharField(max_length=50)
     number = models.CharField(max_length=50, default=uuid.uuid4)
-    # owner = models.ForeignKey(User, related_name="relatedPortfolios", on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name="relatedPortfolios", on_delete=models.CASCADE)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return (f"Portfolio Name: {self.name}, Portfolio Number: {self.number}")
+
+class DraftPortfolio(models.Model):
+    name = models.CharField(max_length=50)
+    number = models.CharField(max_length=50, default=uuid.uuid4)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+    # owner = models.ForeignKey(User, related_name="relatedPortfolios", on_delete=models.CASCADE)
+    # project = models.ForeignKey(Project, related_name="draftPortfolios", on_delete=models.CASCADE)
+
+    def __str__(self):
+        return (f"Draft Portfolio Name: {self.name}, Draft Portfolio Number: {self.number}")
 
 class Account(models.Model):
     name = models.CharField(max_length=50)
