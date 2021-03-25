@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lot Divider</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                {% comment %} <th>Acccount Number</th> {% endcomment %}
+                <th>Acccount Name</th>
+                <th>Security</th>
+                <th>Units</th>
+                <th>Total Cost</th>
+                {% comment %} <th>Acquisition Date</th> {% endcomment %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for holding in holdings %}
+            <tr>
+                {% comment %} <td>{{account.number}}</td> {% endcomment %}
+                <td>{{account.name}}</td>
+                <td>{{holding.ticker}}</td>
+                <td>{{holding.totalUnits}}</td>
+                <td>{{holding.totalFederalCost}}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
