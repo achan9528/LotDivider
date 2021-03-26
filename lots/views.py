@@ -123,12 +123,12 @@ def viewAccountHoldings(request):
 
 def viewSelectPage(request):
     if request.method=='GET':
-        request.session["accountID"] = Account.objects.first().id
-        print(request.session["account"])
+        request.session["accountID"] = Account.objects.get(name="testAccount").id
+        print(request.session["accountID"])
         context = {
-            "account": Account.objects.first(),
-            "holdings" : getHoldings(Account.objects.first().id),
-            "orderedHoldings": getHoldings(Account.objects.first().id).sort(key=lambda x:x["name"])
+            "account": Account.objects.get(name="testAccount"),
+            "holdings" : LotService.getHoldings(Account.objects.get(name="testAccount").id),
+            "orderedHoldings": LotService.getHoldings(Account.objects.get(name="testAccount").id).sort(key=lambda x:x["name"])
         }
         return render(request, "select.html", context)
 
@@ -143,7 +143,7 @@ def split(request):
     if request.method=='POST':
         print(request.POST)
         holdingsDict = {}
-        for holding in Account.objects.get(id=request.session['account']).holdings.all():
+        for holding in Account.objects.get(id=request.session['accountID']).holdings.all():
             if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
                 if Decimal(request.POST[holding.security.ticker]) > 0:
                     holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
