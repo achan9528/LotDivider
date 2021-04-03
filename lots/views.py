@@ -155,6 +155,20 @@ def split(request):
         )
         return HttpResponse(returnDict)
 
-# def newProject(request):
-#     if request.method=='POST':
+def newProject(request):
+    if request.method=='POST':
+        # on post method, save the new Project with the current values from the form
+        # validations
+        # errors = Project.objects.projectValidator(request.POST)
+        # if len(errors) > 0:
+        #     for key,value in errors.items():
+        #         messages.error(request, value)
+        #     return redirect('/')
+        # else:
+            Project.objects.create(
+                name = request.POST['projectName'],
+                # number = (default generated)
+                # owners = (many to many)
+            )
+            return redirect('/')
         

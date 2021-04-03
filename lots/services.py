@@ -35,9 +35,7 @@ def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
     portfolios = []
     
     for i in range(int(numberOfPortfolios)):
-        portfolios.append({
-            'index': i,
-        })
+        portfolios.append({})
 
     portfolioQueue = deque(portfolios)
 
@@ -80,11 +78,15 @@ def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
 
         # for each lot in usedLots, distribute amongst the
         # queue
-        # remainderShares = 0
+        
 
         for p in portfolioQueue:
-            p[ticker] = {}
+            p[ticker] = {
+                'totalCost': 0,
+                'totalShares': 0,
+            }
 
+        remainderShares = 0
         for lot in tempDict['usedLots']:
             currentLotKey = lot['number']
             for p in portfolioQueue:
@@ -104,13 +106,24 @@ def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
                 # choose which account will receive the
                 # shares in the lot based on the queue
                 currentPortfolio = portfolioQueue.pop()
-                print(currentPortfolio)
-                if sharesToDistribute > 1:
+                # print(currentPortfolio[ticker])
+                if remainderShares > 0:
+                    currentPortfolio[ticker][currentLotKey] += remainderShares
+                    currentPortfolio[ticker]['totalShares'] += remainderShares
+                    sharesToDistribute -= remainderShares
+                    remainderShares -= remainderShares
+                    portfolioQueue.append(currentPortfolio)
+                elif sharesToDistribute > 1:
                     currentPortfolio[ticker][currentLotKey] += 1
+                    currentPortfolio[ticker]['totalShares'] += 1
                     sharesToDistribute -= 1
+                    portfolioQueue.appendleft(currentPortfolio)
                 else:
                     currentPortfolio[ticker][currentLotKey] += sharesToDistribute
+                    currentPortfolio[ticker]['totalShares'] += sharesToDistribute
+                    remainderShares = 1-sharesToDistribute
                     sharesToDistribute -= sharesToDistribute
+                    portfolioQueue.append(currentPortfolio)
                 portfolioQueue.appendleft(currentPortfolio)
         portfolioQueue.clear()
         portfolioQueue = deque(portfolios)
@@ -162,9 +175,8 @@ def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
 
             #Case d: if the target shares is even and you're
             # dividing it amongst an even number of portfolios
-    
-    
-    return usedLots
+    print(portfolioQueue)
+    return "test"
 
 def getLots(targetShares, holding, method="HIFO"):
     # restrictions when you are splitting positions
