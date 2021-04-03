@@ -1,4 +1,0 @@
-- add virtual portfolio capability where you can save projects
-    - add POST method to create
-- add other tax lot methods
-- prettify (front end work)
