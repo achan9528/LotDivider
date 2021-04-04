@@ -3,8 +3,9 @@ from django.shortcuts import render, redirect
 from decimal import Decimal
 from .models import *
 from . import services as LotService
+from .forms import LoginForm, RegistrationForm
+import bcrypt
 
-# Create your views here.
 def index(request):
     if request.method=='GET':
         request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
@@ -14,6 +15,61 @@ def index(request):
         return render(request, "index.html", context)
     elif request.method=='POST':
         return "this is a test"
+
+def loginPage(request):
+    form = LoginForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'loginPage.html', context)
+
+def registrationPage(request):
+    form = RegistrationForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'registrationPage.html', context)
+
+def register(request):
+    errors = User.objects.registrationValidator(request.POST)
+    if len(errors) > 0:
+        for key,value in errors.items():
+            messages.error(request, value)
+        return redirect("/registration/error")
+    else:
+        password = request.POST['password']
+        pwHash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+        newUser = User.objects.create(
+            name=request.POST["name"],
+            alias=request.POST["alias"],
+            email=request.POST["email"],
+            password=pwHash
+        )
+        request.session["userID"] = newUser.id
+        return redirect("index.html")
+
+def registrationError(request):
+    return render(request, "registrationPage.html")
+
+def login(request):
+    errors = User.objects.loginValidator(request.POST)
+    users = User.objects.filter(email=request.POST['email'])
+    if len(errors) > 0:
+        for key,value in errors.items():
+            messages.error(request, value)
+        return redirect ("/login/error")
+    elif users:
+        logged_user = users[0]
+        if bcrypt.checkpw(request.POST['password'].encode(), logged_user.password.encode()):
+            request.session['userID'] = logged_user.id
+            return redirect("/index")
+        else:
+            messages.error(request,"Password does not match!")
+            return redirect("/login/error")
+        
+
+def loginError(request):
+    return render(request,"login.html")
         
 def addPortfolio(request):
     print(request)
