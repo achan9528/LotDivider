@@ -7,17 +7,25 @@
     <title>Lot Divider</title>
 </head>
 <body>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>
+            {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+            {{ message }}
+        </li>
+        {% endfor %}
+    </ul>
+    {% endif %}
     <h1>Welcome to LotDivider</h1>
     <h2>Login</h2>
     <form method="POST" action="/login">
         {% csrf_token %}
         {{ form }}
-        <div>
-            {{ form2 }}
-        </div>
-        
+        <!-- {{ form2 }}
+        {{ form3 }} -->
         <button>Login</button>
-        <a href="/registration">Don't have an account? Register here</a>
+        <a href="/register">Don't have an account? Register here</a>
     </form>
 </body>
 </html>

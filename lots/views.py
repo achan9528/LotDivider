@@ -1,12 +1,13 @@
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
+from django.contrib import messages
 from decimal import Decimal
 from .models import *
 from . import services as LotService
-from .forms import LoginForm, RegistrationForm, PortfolioForm
+from .forms import LoginForm, RegistrationForm, PortfolioForm, ProductTypeForm
 import bcrypt
 
-def index(request):
+def dashboard(request):
     if request.method=='GET':
         request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
         context = {
@@ -16,62 +17,62 @@ def index(request):
     elif request.method=='POST':
         return "this is a test"
 
-def loginPage(request):
-    form = LoginForm()
-    form2 = PortfolioForm()
-    context = {
-        'form': form,
-        'form2': form2,
-    }
-    return render(request, 'loginPage.html', context)
-
-def registrationPage(request):
-    form = RegistrationForm()
-    context = {
-        'form': form,
-    }
-    return render(request, 'registrationPage.html', context)
-
 def register(request):
-    errors = User.objects.registrationValidator(request.POST)
-    if len(errors) > 0:
-        for key,value in errors.items():
-            messages.error(request, value)
-        return redirect("/registration/error")
-    else:
-        password = request.POST['password']
-        pwHash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
-        newUser = User.objects.create(
-            name=request.POST["name"],
-            alias=request.POST["alias"],
-            email=request.POST["email"],
-            password=pwHash
-        )
-        request.session["userID"] = newUser.id
-        return redirect("index.html")
-
-def registrationError(request):
-    return render(request, "registrationPage.html")
+    if request.method == 'GET':
+        form = RegistrationForm()
+        context = {
+            'form': form,
+        }
+        return render(request, 'registrationPage.html', context)
+    if request.method == 'POST':
+        errors = User.objects.registrationValidator(request.POST)
+        if len(errors) > 0:
+            for key,value in errors.items():
+                messages.error(request, value)
+                print(value)
+            return redirect("/register")
+        else:
+            password = request.POST['password']
+            pwHash = bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
+            newUser = User.objects.create(
+                name=request.POST["name"],
+                alias=request.POST["alias"],
+                email=request.POST["email"],
+                password=pwHash
+            )
+            request.session["userID"] = newUser.id
+            return redirect("/dashboard")
 
 def login(request):
-    errors = User.objects.loginValidator(request.POST)
-    users = User.objects.filter(email=request.POST['email'])
-    if len(errors) > 0:
-        for key,value in errors.items():
-            messages.error(request, value)
-        return redirect ("/login/error")
-    elif users:
-        logged_user = users[0]
-        if bcrypt.checkpw(request.POST['password'].encode(), logged_user.password.encode()):
-            request.session['userID'] = logged_user.id
-            return redirect("/index")
-        else:
-            messages.error(request,"Password does not match!")
-            return redirect("/login/error")
-        
+    if request.method == 'GET':
+        form = LoginForm()
+        form2 = PortfolioForm()
+        form3 = ProductTypeForm()
+        context = {
+            'form': form,
+            'form2': form2,
+            'form3': form3,
+        }
+        return render(request, 'loginPage.html', context)
 
-def loginError(request):
-    return render(request,"login.html")
+    if request.method == 'POST':
+        print('HERE IS THE REQUEST DATA:')
+        print(request.POST)
+        errors = User.objects.loginValidator(request.POST)
+        users = User.objects.filter(email=request.POST['email'])
+        if len(errors) > 0:
+            for key,value in errors.items():
+                messages.error(request, value)
+                print(value)
+            return redirect ("/login")
+        elif users:
+            logged_user = users[0]
+            if bcrypt.checkpw(request.POST['password'].encode(), logged_user.password.encode()):
+                request.session['userID'] = logged_user.id
+                return redirect("/dashboard")
+            else:
+                messages.error(request,"Password does not match!")
+                return redirect("/login")
         
 def addPortfolio(request):
     print(request)
