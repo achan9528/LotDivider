@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect
 from decimal import Decimal
 from .models import *
 from . import services as LotService
-from .forms import LoginForm, RegistrationForm
+from .forms import LoginForm, RegistrationForm, PortfolioForm
 import bcrypt
 
 def index(request):
@@ -18,8 +18,10 @@ def index(request):
 
 def loginPage(request):
     form = LoginForm()
+    form2 = PortfolioForm()
     context = {
         'form': form,
+        'form2': form2,
     }
     return render(request, 'loginPage.html', context)
 

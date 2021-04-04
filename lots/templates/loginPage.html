@@ -12,6 +12,10 @@
     <form method="POST" action="/login">
         {% csrf_token %}
         {{ form }}
+        <div>
+            {{ form2 }}
+        </div>
+        
         <button>Login</button>
         <a href="/registration">Don't have an account? Register here</a>
     </form>
