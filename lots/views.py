@@ -80,8 +80,31 @@ def newProject(request):
         }
         return render(request, "newProject.html", context)
     if request.method == 'POST':
-        return render(request, 'dashboard.html')
-        
+        # formData = ProjectForm(request.POST)
+        # errors = Project.objects.createValidator(formData)
+        # errors = Project.objects.createValidator(request.POST)
+        # if len(errors) > 0:
+        #     for key,value in errors.items():
+        #         messages.error(request, value)
+        #     return redirect('/projects/new/')
+        # else:
+            newProject = Project.objects.create(
+                name = request.POST['name'],
+            )
+            newProject.owners.add(User.objects.get(id=request.session['userID']))
+            newProject.save()
+            return redirect("/projects/" + newProject.id + "/")
+
+def projectDashboard(request, id):
+    if request.method == 'GET':
+        project = Project.objects.get(id=id)
+        form = PortfolioSelectForm()
+        context = {
+            'project': project,
+            'form': form,
+        }
+        return render(request, 'projectDashboard.html', context)
+
 def addPortfolio(request):
     print(request)
     if request.method=='POST':

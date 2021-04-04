@@ -46,6 +46,10 @@ class PortfolioForm(ModelForm):
         #     'owner': Select()
         # }
 
+class PortfolioSelectForm(forms.Form):
+    choice = forms.ModelChoiceField(queryset=Portfolio.objects.all(),
+    empty_label="Select a Portfolio")
+
 class HoldingForm(ModelForm):
     class Meta:
         model = Holding
