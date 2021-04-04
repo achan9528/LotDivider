@@ -1,5 +1,6 @@
 from django import forms
-from .models import Portfolio, User, Project, ProductType
+from django.forms import ModelForm
+from .models import *
 
 class LoginForm(forms.Form):
     email = forms.CharField(label = 'email')
@@ -11,13 +12,33 @@ class RegistrationForm(forms.Form):
     email = forms.CharField(label= 'Email')
     password = forms.CharField(label='Password')
     passwordConfirm = forms.CharField(label='Password Confirmation')
-
-class ProjectForm(forms.ModelForm):
+    
+class ProjectForm(ModelForm):
     class Meta:
         model = Project
         fields = ['name']
-    
-class PortfolioForm(forms.ModelForm):
+
+class ProductTypeForm(ModelForm):
+    class Meta:
+        model = ProductType
+        fields = ['name', 'fractionalLotsAllowed']
+        labels = {
+            'name': 'Name',
+            'fractionalLotsAllowed': 'Fractional Lots Allowed',
+        }
+
+class SecurityForm(ModelForm):
+    class Meta:
+        model = Security
+        fields = ['ticker','cusip','name','productType']
+        labels = {
+            'ticker': 'Ticker',
+            'cusip': 'CUSIP',
+            'name': 'Name',
+            'productType': 'Product Type',
+        }
+
+class PortfolioForm(ModelForm):
     class Meta:
         model = Portfolio
         fields = ['name', 'owner']
@@ -25,11 +46,48 @@ class PortfolioForm(forms.ModelForm):
         #     'owner': Select()
         # }
 
-class ProductTypeForm(forms.ModelForm):
+class HoldingForm(ModelForm):
     class Meta:
-        model = ProductType
-        fields = ['name', 'fractionalLotsAllowed']
+        model = Holding
+        fields = ['security', 'account']
         labels = {
-            'name': 'Name',
-            'fractionalLotsAllowed': 'Fractional Lots Allowed',
+            'security': 'Security',
+            'account': 'Account',
+        }
+
+class TaxLotForm(ModelForm):
+    class Meta:
+        model = TaxLot
+        fields = ['holding', 'units', 'totalFederalCost', 'totalStateCost']
+        labels = {
+            'holding': 'Holding',
+            'units': 'Units',
+            'totalFederalCost': 'Total Federal Cost',
+            'totalStateCost': 'Total State Cost',
+        }
+
+class DraftPortfolioForm(ModelForm):
+    class Meta:
+        model = DraftPortfolio
+        fields = ['name', 'project']
+
+class DraftAccountForm(ModelForm):
+    class Meta:
+        model = DraftAccount
+        fields = ['name','draftPortfolio']
+
+class DraftHoldingForm(ModelForm):
+    class Meta:
+        model = DraftHolding
+        fields = ['security', 'draftAccount']
+
+class DraftTaxLotForm(ModelForm):
+    class Meta:
+        model = DraftTaxLot
+        fields = ['draftHolding', 'units', 'totalFederalCost', 'totalStateCost']
+        labels = {
+            'draftHolding': 'Holding',
+            'units': 'Units',
+            'totalFederalCost': 'Total Federal Cost',
+            'totalStateCost': 'Total State Cost',
         }

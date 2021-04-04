@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lot Divider</title>
+</head>
+
+<body>
+    <h1>Create A New Project</h1>
+    <form>
+        {% csrf_token %}
+        {{ newProjectForm }}
+        <button>Create New Project</button>
+    </form>
+</body>
+
+</html>
