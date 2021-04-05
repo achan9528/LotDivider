@@ -12,6 +12,7 @@
     <h1>Proposal Name: {{ proposal.name }}</h1>
     <h2>{{ proposal.number }}</h2>
     <a href="/projects/{{project.id}}/portfolios/{{portfolio.id}}/accounts/{{account.id}}/proposals/new">Back</a>
+    <a href="/dashboard/">Dashboard</a>
     {%for portfolio in proposal.draftPortfolios.all %}
     <h2>{{portfolio.name}}</h2>
     <h2>{{portfolio.number}}</h2>

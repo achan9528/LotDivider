@@ -12,6 +12,7 @@
     <h1>{{ account.name }}</h1>
     <h2>{{ account.number }}</h2>
     <a href="/projects/{{project.id}}/portfolios/{{portfolio.id}}/accounts/{{account.id}}/">Back</a>
+    <a href="/dashboard/">Dashboard</a>
     <form method="POST" action="/projects/{{project.id}}/portfolios/{{portfolio.id}}/accounts/{{account.id}}/proposals/new/">
         {% csrf_token %}
         <div>

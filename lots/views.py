@@ -69,6 +69,7 @@ def dashboard(request):
     if request.method == 'GET':
         # request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
         context = {
+            'user': User.objects.get(id=request.session['userID']),
             'projects': User.objects.get(id=request.session['userID']).projects.all(),
         }
         return render(request, "dashboard.html", context)
