@@ -149,8 +149,8 @@ def newProposal(request, projectID, portfolioID, accountID):
             numberOfPortfolios=request.POST["numberOfPortfolios"],
             holdingsDict=holdingsDict,
         )
-        return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
-        return redirect('projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/' + str(proposalID))
+        # return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
+        return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/' + str(proposal.id) + "/")
 
 def proposals(request, projectID, portfolioID, accountID, proposalID):
     if request.method == 'GET':

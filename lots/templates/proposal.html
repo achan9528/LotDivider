@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lot Divider</title>
+</head>
+
+<body>
+    <h1>Proposal Name: {{ proposal.name }}</h1>
+    <h2>{{ proposal.number }}</h2>
+    <a href="/projects/{{project.id}}/portfolios/{{portfolio.id}}/accounts/{{account.id}}/proposals/new">Back</a>
+    {%for portfolio in proposal.draftPortfolios.all %}
+    <h2>{{portfolio.name}}</h2>
+    <h2>{{portfolio.number}}</h2>
+    <table>
+        <thead>
+            <tr>
+                <td>Ticker</td>
+                <td>Name</td>
+                <td>Lot Reference Number</td>
+                <td>Units</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for account in portfolio.draftAccounts.all %}
+            {% for holding in account.draftHoldings.all %}
+            {% for lot in holding.draftTaxLots.all %}
+            <tr>
+                <td>{{ lot.ticker }}</td>
+                <td>{{ lot.name }}</td>
+                <td>{{ lot.number }}</td>
+                <td>{{ lot.units }}</td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+            {% endfor %}
+        </tbody>
+    </table>
+    {%endfor%}
+</body>
+
+</html>

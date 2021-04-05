@@ -194,7 +194,7 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
         )
         for ticker in portfolio.keys():
             draftHolding = DraftHolding.objects.create(
-                    security = Security.objects.get(name=ticker),
+                    security = Security.objects.get(ticker=ticker),
                     draftAccount = draftAccount
                 )
             for lot, shares in portfolio[ticker].items():
@@ -206,7 +206,7 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                     )
 
     print(portfolioQueue)
-    return "test"
+    return proposal
 
 def getLots(targetShares, holding, method="HIFO"):
     # restrictions when you are splitting positions
