@@ -9,23 +9,23 @@
 </head>
 
 <body>
-    <h1>{{ project.name }}</h1>
-    <h2>{{ project.number }}</h2>
+    <h1>{{ portfolio.name }}</h1>
+    <h2>{{ portfolio.number }}</h2>
     <table>
         <thead>
             <tr>
-                <td>Portfolio Name</td>
-                <td>Portfolio Number</td>
+                <td>Account Name</td>
+                <td>Account Number</td>
                 <Td>Action</Td>
             </tr>
         </thead>
         <tbody>
-            {% for portfolio in portfolios %}
+            {% for account in accounts %}
             <tr>
-                <td>{{ portfolio.name}}</td>
-                <td>{{ portfolio.number}}</td>
+                <td>{{ account.name }}</td>
+                <td>{{ account.number}}</td>
                 <td>
-                    <a href="/projects/{{project.id}}/portfolios/{{portfolio.id}}">Link</a>
+                    <a href="/projects/{{project.id}}/portfolios/{{portfolio.id}}/accounts/{{account.id}}/">Link</a>
                 </td>
             </tr>
             {% endfor %}

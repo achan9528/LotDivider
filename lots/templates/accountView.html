@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lot Divider</title>
+</head>
+
+<body>
+    <h1>{{ account.name }}</h1>
+    <h2>{{ account.number }}</h2>
+    <a href="/projects/{{project.id}}/portfolios/{{portfolio.id}}/accounts/{{account.id}}/select">Select Holdings and Split</a>
+    <table>
+        <thead>
+            <tr>
+                <td>Ticker</td>
+                <td>Name</td>
+                <td>Total Federal Cost</td>
+                <td>Total State Cost</td>
+                <td>Units</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for holding in holdings %}
+            <tr>
+                <td>{{ holding.ticker }}</td>
+                <td>{{ holding.name }}</td> 
+                <td>{{ holding.totalFederalCost }}</td>
+                <td>{{ holding.totalStateCost }}</td>
+                <td>{{ holding.totalUnits }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>

@@ -98,12 +98,58 @@ def newProject(request):
 def projectDashboard(request, id):
     if request.method == 'GET':
         project = Project.objects.get(id=id)
-        form = PortfolioSelectForm()
+        portfolios = Portfolio.objects.all()
         context = {
             'project': project,
-            'form': form,
+            'portfolios': portfolios,
         }
         return render(request, 'projectDashboard.html', context)
+
+def portfolioView(request, projectID, portfolioID):
+    if request.method == 'GET':
+        context = {
+            'project': Project.objects.get(id=projectID),
+            'portfolio': Portfolio.objects.get(id=portfolioID),
+            'accounts': Portfolio.objects.get(id=portfolioID).accounts.all()
+        }
+        return render(request, 'portfolioView.html', context)
+
+def accountView(request, projectID, portfolioID, accountID):
+    if request.method == 'GET':
+        context = {
+            'project': Project.objects.get(id=projectID),
+            'portfolio': Portfolio.objects.get(id=portfolioID),
+            'account': Account.objects.get(id=accountID),
+            "holdings" : LotService.getHoldings(accountID),
+            "orderedHoldings": LotService.getHoldings(accountID).sort(key=lambda x:x["name"])
+        }
+        return render(request, 'accountView.html', context)
+
+def split(request, projectID, portfolioID, accountID):
+    if request.method == 'GET':
+        context = {
+            'project': Project.objects.get(id=projectID),
+            'portfolio': Portfolio.objects.get(id=portfolioID),
+            'account': Account.objects.get(id=accountID),
+            "holdings" : LotService.getHoldings(accountID),
+            "orderedHoldings": LotService.getHoldings(accountID).sort(key=lambda x:x["name"])
+        }
+        return render(request, 'split.html', context)
+    if request.method=='POST':
+        print(request.POST)
+        holdingsDict = {}
+        for holding in Account.objects.get(id=accountID).holdings.all():
+            if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
+                if Decimal(request.POST[holding.security.ticker]) > 0:
+                    holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
+        returnDict = LotService.splitPortfolio(
+            accountID=request.session['accountID'],
+            method=request.POST["method"],
+            numberOfPortfolios=request.POST["numberOfPortfolios"],
+            holdingsDict=holdingsDict,
+        )
+        return HttpResponse(returnDict)
+
 
 def addPortfolio(request):
     print(request)
@@ -202,45 +248,4 @@ def addLot(request):
             )
             return redirect('/')
 
-def viewAccountHoldings(request):
-    if request.method=='GET':        
-        context = {
-            "account": Account.objects.first(),
-            "holdings" : getHoldings(Account.objects.first().id),
-            "orderedHoldings": getHoldings(Account.objects.first().id).sort(key=lambda x:x["name"])
-        }
-        return render(request, "holdings.html", context)
 
-def viewSelectPage(request):
-    if request.method=='GET':
-        request.session["accountID"] = Account.objects.get(name="testAccount").id
-        print(request.session["accountID"])
-        context = {
-            "account": Account.objects.get(name="testAccount"),
-            "holdings" : LotService.getHoldings(Account.objects.get(name="testAccount").id),
-            "orderedHoldings": LotService.getHoldings(Account.objects.get(name="testAccount").id).sort(key=lambda x:x["name"])
-        }
-        return render(request, "select.html", context)
-
-def viewLots(request):
-    if request.method=='GET':        
-        context = {
-            "portfolio":Portfolio.objects.first()
-        }
-        return render(request, "lots.html", context)
-
-def split(request):
-    if request.method=='POST':
-        print(request.POST)
-        holdingsDict = {}
-        for holding in Account.objects.get(id=request.session['accountID']).holdings.all():
-            if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
-                if Decimal(request.POST[holding.security.ticker]) > 0:
-                    holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
-        returnDict = LotService.splitPortfolio(
-            accountID=request.session['accountID'],
-            method=request.POST["method"],
-            numberOfPortfolios=request.POST["numberOfPortfolios"],
-            holdingsDict=holdingsDict,
-        )
-        return HttpResponse(returnDict)
