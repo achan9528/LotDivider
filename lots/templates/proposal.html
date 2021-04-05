@@ -29,7 +29,7 @@
             {% for holding in account.draftHoldings.all %}
             {% for lot in holding.draftTaxLots.all %}
             <tr>
-                <td>{{ lot.ticker }}</td>
+                <td>{{ lot.draftHolding.security.ticker }}</td>
                 <td>{{ lot.name }}</td>
                 <td>{{ lot.number }}</td>
                 <td>{{ lot.units }}</td>

@@ -96,6 +96,7 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
             for p in portfolioQueue:
                 p[ticker][currentLotKey] = 0
             sharesToDistribute = lot['units']
+            # print(sharesToDistribute)
             # if the lot has less shares than the number
             # of portfolios
             # if lot.units < numberOfPortfolios:
@@ -128,11 +129,11 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                     remainderShares = 1-sharesToDistribute
                     sharesToDistribute -= sharesToDistribute
                     portfolioQueue.append(currentPortfolio)
-                portfolioQueue.appendleft(currentPortfolio)
 
         # for p in portfolioQueue:
         #     print("Portfolio")
         #     print(p)
+        # print(portfolioQueue)
         portfolioQueue.clear()
         portfolioQueue = deque(portfolios)
         # Case 1: If the number of shares is less than
@@ -205,7 +206,7 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                         draftHolding = draftHolding,
                     )
 
-    print(portfolioQueue)
+    # print(portfolioQueue)
     return proposal
 
 def getLots(targetShares, holding, method="HIFO"):
