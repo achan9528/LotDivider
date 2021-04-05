@@ -14,6 +14,12 @@
     <a href="/projects/{{project.id}}/portfolios/{{portfolio.id}}/accounts/{{account.id}}/proposals/new">Back</a>
     <a href="/dashboard/">Dashboard</a>
     <a href="/logout/">Logout</a>
+
+    <form method="POST" action="/proposals/{{proposal.id}}/edit/">
+        {% csrf_token %}
+        <input name="proposalName" placeholder={{proposal.name}}></input>
+        <button>Change Proposal Name</button>
+    </form>
     {%for portfolio in proposal.draftPortfolios.all %}
     <h2>{{portfolio.name}}</h2>
     <h2>{{portfolio.number}}</h2>

@@ -7,6 +7,10 @@ from . import services as LotService
 from .forms import *
 import bcrypt
 
+def validUser(request):
+    if 'userID' in request.session:
+        return True
+    return False
 
 def login(request):
     if request.method == 'GET':
@@ -63,107 +67,153 @@ def register(request):
                 password=pwHash
             )
             request.session["userID"] = newUser.id
-            return redirect("/dashboard")
+            return redirect("/dashboard/")
 
 def dashboard(request):
-    if request.method == 'GET':
-        # request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
-        context = {
-            'user': User.objects.get(id=request.session['userID']),
-            'projects': User.objects.get(id=request.session['userID']).projects.all(),
-        }
-        return render(request, "dashboard.html", context)
+    if validUser(request):
+        if request.method == 'GET':
+            # request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
+            context = {
+                'user': User.objects.get(id=request.session['userID']),
+                'projects': User.objects.get(id=request.session['userID']).projects.all(),
+            }
+            return render(request, "dashboard.html", context)
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
 
 def newProject(request):
-    if request.method == 'GET':
-        form = ProjectForm()
-        context = {
-            'newProjectForm': form,
-        }
-        return render(request, "newProject.html", context)
-    if request.method == 'POST':
-        # formData = ProjectForm(request.POST)
-        # errors = Project.objects.createValidator(formData)
-        # errors = Project.objects.createValidator(request.POST)
-        # if len(errors) > 0:
-        #     for key,value in errors.items():
-        #         messages.error(request, value)
-        #     return redirect('/projects/new/')
-        # else:
-            newProject = Project.objects.create(
-                name = request.POST['name'],
-            )
-            newProject.owners.add(User.objects.get(id=request.session['userID']))
-            newProject.save()
-            return redirect("/projects/" + str(newProject.id) + "/")
+    if validUser(request):
+        if request.method == 'GET':
+            form = ProjectForm()
+            context = {
+                'newProjectForm': form,
+            }
+            return render(request, "newProject.html", context)
+        if request.method == 'POST':
+            # formData = ProjectForm(request.POST)
+            # errors = Project.objects.createValidator(formData)
+            # errors = Project.objects.createValidator(request.POST)
+            # if len(errors) > 0:
+            #     for key,value in errors.items():
+            #         messages.error(request, value)
+            #     return redirect('/projects/new/')
+            # else:
+                newProject = Project.objects.create(
+                    name = request.POST['name'],
+                )
+                newProject.owners.add(User.objects.get(id=request.session['userID']))
+                newProject.save()
+                return redirect("/projects/" + str(newProject.id) + "/")
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
 
 def projectDashboard(request, id):
-    if request.method == 'GET':
-        project = Project.objects.get(id=id)
-        portfolios = Portfolio.objects.all()
-        context = {
-            'project': project,
-            'portfolios': portfolios,
-        }
-        return render(request, 'projectDashboard.html', context)
+    if validUser(request):
+        if request.method == 'GET':
+            project = Project.objects.get(id=id)
+            portfolios = Portfolio.objects.all()
+            context = {
+                'project': project,
+                'portfolios': portfolios,
+            }
+            return render(request, 'projectDashboard.html', context)
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
+
 
 def portfolioView(request, projectID, portfolioID):
-    if request.method == 'GET':
-        context = {
-            'project': Project.objects.get(id=projectID),
-            'portfolio': Portfolio.objects.get(id=portfolioID),
-            'accounts': Portfolio.objects.get(id=portfolioID).accounts.all()
-        }
-        return render(request, 'portfolioView.html', context)
+    if validUser(request):
+        if request.method == 'GET':
+            context = {
+                'project': Project.objects.get(id=projectID),
+                'portfolio': Portfolio.objects.get(id=portfolioID),
+                'accounts': Portfolio.objects.get(id=portfolioID).accounts.all()
+            }
+            return render(request, 'portfolioView.html', context)
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
 
 def accountView(request, projectID, portfolioID, accountID):
-    if request.method == 'GET':
-        context = {
-            'project': Project.objects.get(id=projectID),
-            'portfolio': Portfolio.objects.get(id=portfolioID),
-            'account': Account.objects.get(id=accountID),
-            "holdings" : LotService.getHoldings(accountID),
-            "orderedHoldings": LotService.getHoldings(accountID).sort(key=lambda x:x["name"])
-        }
-        return render(request, 'accountView.html', context)
+    if validUser(request):
+        if request.method == 'GET':
+            context = {
+                'project': Project.objects.get(id=projectID),
+                'portfolio': Portfolio.objects.get(id=portfolioID),
+                'account': Account.objects.get(id=accountID),
+                "holdings" : LotService.getHoldings(accountID),
+                "orderedHoldings": LotService.getHoldings(accountID).sort(key=lambda x:x["name"])
+            }
+            return render(request, 'accountView.html', context)
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
 
 def newProposal(request, projectID, portfolioID, accountID):
-    if request.method == 'GET':
-        context = {
-            'project': Project.objects.get(id=projectID),
-            'portfolio': Portfolio.objects.get(id=portfolioID),
-            'account': Account.objects.get(id=accountID),
-            "holdings" : LotService.getHoldings(accountID),
-            "orderedHoldings": LotService.getHoldings(accountID).sort(key=lambda x:x["name"])
-        }
-        return render(request, 'newProposal.html', context)
-    if request.method=='POST':
-        print(request.POST)
-        holdingsDict = {}
-        for holding in Account.objects.get(id=accountID).holdings.all():
-            if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
-                if Decimal(request.POST[holding.security.ticker]) > 0:
-                    holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
-        proposal = LotService.splitPortfolio(
-            projectID=projectID,
-            accountID=accountID,
-            method=request.POST["method"],
-            numberOfPortfolios=request.POST["numberOfPortfolios"],
-            holdingsDict=holdingsDict,
-        )
-        # return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
-        return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/' + str(proposal.id) + "/")
+    if validUser(request):
+        if request.method == 'GET':
+            context = {
+                'project': Project.objects.get(id=projectID),
+                'portfolio': Portfolio.objects.get(id=portfolioID),
+                'account': Account.objects.get(id=accountID),
+                "holdings" : LotService.getHoldings(accountID),
+                "orderedHoldings": LotService.getHoldings(accountID).sort(key=lambda x:x["name"])
+            }
+            return render(request, 'newProposal.html', context)
+        if request.method=='POST':
+            print(request.POST)
+            holdingsDict = {}
+            for holding in Account.objects.get(id=accountID).holdings.all():
+                if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
+                    if Decimal(request.POST[holding.security.ticker]) > 0:
+                        holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
+            proposal = LotService.splitPortfolio(
+                projectID=projectID,
+                accountID=accountID,
+                method=request.POST["method"],
+                numberOfPortfolios=request.POST["numberOfPortfolios"],
+                holdingsDict=holdingsDict,
+            )
+            # return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
+            return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/' + str(proposal.id) + "/")
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
 
 def proposals(request, projectID, portfolioID, accountID, proposalID):
-    if request.method == 'GET':
-        context = {
-            'project': Project.objects.get(id=projectID),
-            'portfolio': Portfolio.objects.get(id=portfolioID),
-            'account': Account.objects.get(id=accountID),
-            "holdings" : LotService.getHoldings(accountID),
-            'proposal': Proposal.objects.get(id=proposalID),
-        }
-        return render(request, 'proposal.html', context)
+    if validUser(request):
+        if request.method == 'GET':
+            context = {
+                'project': Project.objects.get(id=projectID),
+                'portfolio': Portfolio.objects.get(id=portfolioID),
+                'account': Account.objects.get(id=accountID),
+                "holdings" : LotService.getHoldings(accountID),
+                'proposal': Proposal.objects.get(id=proposalID),
+            }
+            return render(request, 'proposal.html', context)
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
+
+def editProposal(request, proposalID):
+    if validUser(request):
+        if request.method == 'GET':
+            context = {
+                'proposal': Proposal.objects.get(id=proposalID)
+            }
+            return render(request, 'editProposal.html', context)
+        if request.method == 'POST':
+            proposal = Proposal.objects.get(id=proposalID)
+            proposal.name = request.POST['proposalName']
+            proposal.save()
+            return redirect('/proposals/' + str(proposalID) + "/")
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
+
 def addPortfolio(request):
     print(request)
     if request.method=='POST':
@@ -262,3 +312,7 @@ def addLot(request):
 
 def admin(request):
     return render(request, 'index.html')
+
+def logout(request):
+    request.session.clear()
+    return redirect('/')

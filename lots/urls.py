@@ -8,7 +8,8 @@ urlpatterns = [
     path('dashboard/', views.dashboard),
     path('projects/new/', views.newProject),
     path('projects/<int:id>/', views.projectDashboard),
-    # path('projects/<int:id>/', views.projectDashboard),
+    path('proposals/<int:proposalID>/', views.proposals),
+    path('proposals/<int:proposalID>/edit/', views.editProposal),
     path('projects/<int:projectID>/portfolios/<int:portfolioID>/', views.portfolioView),
     path('projects/<int:projectID>/portfolios/<int:portfolioID>/accounts/<int:accountID>/', views.accountView),
     path('projects/<int:projectID>/portfolios/<int:portfolioID>/accounts/<int:accountID>/proposals/new/', views.newProposal),
@@ -20,5 +21,6 @@ urlpatterns = [
     path('holdings/add/', views.addHolding),
     path('lots/add/', views.addLot),
     path('admin', views.admin),
+    path('logout/', views.logout),
 ]
 
