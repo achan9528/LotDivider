@@ -26,7 +26,7 @@ def getHoldings(accountID):
     
     return holdings
 
-def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
+def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDict):
     # create new dictionaries which will represent each draft portfolio/account
     # put them into a queue so that way you know which order to put extra shares
     # into
@@ -36,6 +36,10 @@ def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
     
     for i in range(int(numberOfPortfolios)):
         portfolios.append({})
+
+        # portfolios.append(
+        #     DraftPortfolio.objects.create()
+        # )
 
     portfolioQueue = deque(portfolios)
 
@@ -179,13 +183,27 @@ def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
 
             #Case d: if the target shares is even and you're
             # dividing it amongst an even number of portfolios
-    # Proposal.objects.create()
-    # proposal = Proposal.objects.create()
-    # for portfolio in portfolioQueue:
-    #     # print (portfolio)
-    #     for holding in portfolio.keys:
-    #         if key != 'totalCost' and key != 'totalShares':
-    #             print(key)
+    
+    proposal = Proposal.objects.create(project=Project.objects.get(id=projectID))
+    for portfolio in portfolioQueue:
+        draftPortfolio = DraftPortfolio.objects.create(
+            proposal = proposal,
+        )
+        draftAccount = DraftAccount.objects.create(
+            draftPortfolio = draftPortfolio,
+        )
+        for ticker in portfolio.keys():
+            draftHolding = DraftHolding.objects.create(
+                    security = Security.objects.get(name=ticker),
+                    draftAccount = draftAccount
+                )
+            for lot, shares in portfolio[ticker].items():
+                if lot != 'totalCost' and lot != 'totalShares':
+                    DraftTaxLot.objects.create(
+                        number = lot,
+                        units = shares,
+                        draftHolding = draftHolding,
+                    )
 
     print(portfolioQueue)
     return "test"

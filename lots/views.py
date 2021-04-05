@@ -143,13 +143,14 @@ def newProposal(request, projectID, portfolioID, accountID):
                 if Decimal(request.POST[holding.security.ticker]) > 0:
                     holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
         proposal = LotService.splitPortfolio(
+            projectID=projectID,
             accountID=accountID,
             method=request.POST["method"],
             numberOfPortfolios=request.POST["numberOfPortfolios"],
             holdingsDict=holdingsDict,
         )
         return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
-        # return redirect('projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/' + str(proposalID))
+        return redirect('projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/' + str(proposalID))
 
 def proposals(request, projectID, portfolioID, accountID, proposalID):
     if request.method == 'GET':
@@ -183,7 +184,7 @@ def addAccount(request):
         # else:
             newAccount = Account.objects.create(
                 name = request.POST['accountName'],
-                portfolio = Portfolio.objects.get(name="alex"),
+                portfolio = Portfolio.objects.get(name="test"),
             )
             return redirect('/admin')
 
@@ -246,7 +247,7 @@ def addLot(request):
             newLot = TaxLot.objects.create(
                 holding = Holding.objects.get(
                     security=Security.objects.get(ticker=request.POST['ticker']),
-                    account=Account.objects.get(name="alex")
+                    account=Account.objects.get(name="test")
                 ), units = request.POST['units'],
                 totalFederalCost = request.POST['totalFederalCost'],
                 totalStateCost = request.POST['totalStateCost'],
