@@ -12,6 +12,7 @@
     <h1>{{ project.name }}</h1>
     <h2>{{ project.number }}</h2>
     <table>
+        <h2>Portfolios</h2>
         <thead>
             <tr>
                 <td>Portfolio Name</td>
@@ -30,6 +31,31 @@
             </tr>
             {% endfor %}
         </tbody>
+    </table>
+    <table>
+        <h2>Proposals</h2>
+        <thead>
+            <tr>
+                <td>Proposal Name</td>
+                <td>Proposal Number</td>
+                <td>Related Portfolios</td>
+            </tr>
+        </thead>
+        {% for proposal in project.proposals.all %}
+        <tbody>
+            <tr>
+                <td>proposal.number</td>
+                <td>proposal.name</td>
+                <td>
+                    <ul>
+                        {% for draftPortfolio in proposal.draftPortfolios.all %}
+                        <li>{{draftPortfolio.name}} | {{draftPortfolio.number}}</li>
+                        {%endfor%}
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+        {% endfor %}
     </table>
 </body>
 

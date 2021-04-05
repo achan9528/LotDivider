@@ -9,5 +9,25 @@
 <body>
     <h1>User Dashboard</h1>
     <a href="/projects/new/">New Project</a>
+    <table>
+        <thead>
+            <tr>
+                <td>Project Number</td>
+                <td>Project Name</td>
+                <td>Link</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr>
+                <td>{{project.number}}</td>
+                <td>{{project.name}}</td>
+                <td>
+                    <a href="/projects/{{project.id}}/">Go</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </body>
 </html>

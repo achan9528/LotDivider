@@ -69,6 +69,7 @@ def dashboard(request):
     if request.method == 'GET':
         # request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
         context = {
+            'projects': User.objects.get(id=request.session['userID']).projects.all(),
         }
         return render(request, "dashboard.html", context)
 
@@ -155,6 +156,10 @@ def newProposal(request, projectID, portfolioID, accountID):
 def proposals(request, projectID, portfolioID, accountID, proposalID):
     if request.method == 'GET':
         context = {
+            'project': Project.objects.get(id=projectID),
+            'portfolio': Portfolio.objects.get(id=portfolioID),
+            'account': Account.objects.get(id=accountID),
+            "holdings" : LotService.getHoldings(accountID),
             'proposal': Proposal.objects.get(id=proposalID),
         }
         return render(request, 'proposal.html', context)
