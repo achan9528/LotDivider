@@ -11,10 +11,13 @@ urlpatterns = [
     path('portfolios/add/', views.addPortfolio),
     path('projects/<int:projectID>/portfolios/<int:portfolioID>/', views.portfolioView),
     path('projects/<int:projectID>/portfolios/<int:portfolioID>/accounts/<int:accountID>/', views.accountView),
-    path('projects/<int:projectID>/portfolios/<int:portfolioID>/accounts/<int:accountID>/select', views.split),
+    path('projects/<int:projectID>/portfolios/<int:portfolioID>/accounts/<int:accountID>/proposals/new', views.newProposal),
+    # path('projects/<int:projectID>/portfolios/<int:portfolioID>/accounts/<int:accountID>/proposals/<int:proposalID>', views.proposals),
     path('accounts/add/', views.addAccount),
     path('security/add/', views.addSecurity),
     path('productType/add/', views.addProductType),
     path('holdings/add/', views.addHolding),
     path('lots/add/', views.addLot),
+    path('admin', views.admin),
 ]
+

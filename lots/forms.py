@@ -70,28 +70,28 @@ class TaxLotForm(ModelForm):
             'totalStateCost': 'Total State Cost',
         }
 
-class DraftPortfolioForm(ModelForm):
-    class Meta:
-        model = DraftPortfolio
-        fields = ['name', 'project']
+# class DraftPortfolioForm(ModelForm):
+#     class Meta:
+#         model = DraftPortfolio
+#         fields = ['name', 'project']
 
-class DraftAccountForm(ModelForm):
-    class Meta:
-        model = DraftAccount
-        fields = ['name','draftPortfolio']
+# class DraftAccountForm(ModelForm):
+#     class Meta:
+#         model = DraftAccount
+#         fields = ['name','draftPortfolio']
 
-class DraftHoldingForm(ModelForm):
-    class Meta:
-        model = DraftHolding
-        fields = ['security', 'draftAccount']
+# class DraftHoldingForm(ModelForm):
+#     class Meta:
+#         model = DraftHolding
+#         fields = ['security', 'draftAccount']
 
-class DraftTaxLotForm(ModelForm):
-    class Meta:
-        model = DraftTaxLot
-        fields = ['draftHolding', 'units', 'totalFederalCost', 'totalStateCost']
-        labels = {
-            'draftHolding': 'Holding',
-            'units': 'Units',
-            'totalFederalCost': 'Total Federal Cost',
-            'totalStateCost': 'Total State Cost',
-        }
+# class DraftTaxLotForm(ModelForm):
+#     class Meta:
+#         model = DraftTaxLot
+#         fields = ['draftHolding', 'units', 'totalFederalCost', 'totalStateCost']
+#         labels = {
+#             'draftHolding': 'Holding',
+#             'units': 'Units',
+#             'totalFederalCost': 'Total Federal Cost',
+#             'totalStateCost': 'Total State Cost',
+#         }

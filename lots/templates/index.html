@@ -11,7 +11,7 @@
         <li><a href="/portfolios/holdings/select">Select Holdings</a></li>
     </ul>
 
-    <form method="POST" action="/portfolios/add">
+    <form method="POST" action="/portfolios/add/">
         {% csrf_token %}
         <h2>Add Portfolio</h2>
         <div>
@@ -20,7 +20,7 @@
         </div>
         <button>Submit</button>
     </form>
-    <form method="POST" action="/accounts/add">
+    <form method="POST" action="/accounts/add/">
         {% csrf_token %}
         <h2>Add Account</h2>
         <div>
@@ -29,7 +29,7 @@
         </div>
         <button>Submit</button>
     </form>
-    <form method="POST" action="/productType/add">
+    <form method="POST" action="/productType/add/">
         {% csrf_token %}
         <h2>Add Product Type</h2>
         <div>
@@ -42,7 +42,7 @@
         </div>
         <button>Submit</button>
     </form>
-    <form method="POST" action="/security/add">
+    <form method="POST" action="/security/add/">
         {% csrf_token %}
         <h2>Add Security</h2>
         <div>
@@ -63,7 +63,7 @@
         </div>
         <button>Submit</button>
     </form>
-    <form method="POST" action="/holding/add">
+    <form method="POST" action="/holdings/add/">
         {% csrf_token %}
         <h2>Add Holding</h2>
         <div>
@@ -76,7 +76,7 @@
         </div>
         <button>Submit</button>
     </form>
-    <form method="POST" action="/lots/add">
+    <form method="POST" action="/lots/add/">
         {% csrf_token %}
         <h2>Add Lot</h2>
         <div>

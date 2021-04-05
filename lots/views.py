@@ -67,7 +67,7 @@ def register(request):
 
 def dashboard(request):
     if request.method == 'GET':
-        request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
+        # request.session['portfolioID'] = Portfolio.objects.get(name="alex").id
         context = {
         }
         return render(request, "dashboard.html", context)
@@ -93,7 +93,7 @@ def newProject(request):
             )
             newProject.owners.add(User.objects.get(id=request.session['userID']))
             newProject.save()
-            return redirect("/projects/" + newProject.id + "/")
+            return redirect("/projects/" + str(newProject.id) + "/")
 
 def projectDashboard(request, id):
     if request.method == 'GET':
@@ -125,7 +125,7 @@ def accountView(request, projectID, portfolioID, accountID):
         }
         return render(request, 'accountView.html', context)
 
-def split(request, projectID, portfolioID, accountID):
+def newProposal(request, projectID, portfolioID, accountID):
     if request.method == 'GET':
         context = {
             'project': Project.objects.get(id=projectID),
@@ -134,7 +134,7 @@ def split(request, projectID, portfolioID, accountID):
             "holdings" : LotService.getHoldings(accountID),
             "orderedHoldings": LotService.getHoldings(accountID).sort(key=lambda x:x["name"])
         }
-        return render(request, 'split.html', context)
+        return render(request, 'newProposal.html', context)
     if request.method=='POST':
         print(request.POST)
         holdingsDict = {}
@@ -142,15 +142,21 @@ def split(request, projectID, portfolioID, accountID):
             if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
                 if Decimal(request.POST[holding.security.ticker]) > 0:
                     holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
-        returnDict = LotService.splitPortfolio(
-            accountID=request.session['accountID'],
+        proposal = LotService.splitPortfolio(
+            accountID=accountID,
             method=request.POST["method"],
             numberOfPortfolios=request.POST["numberOfPortfolios"],
             holdingsDict=holdingsDict,
         )
-        return HttpResponse(returnDict)
+        return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
+        # return redirect('projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/' + str(proposalID))
 
-
+def proposals(request, projectID, portfolioID, accountID, proposalID):
+    if request.method == 'GET':
+        context = {
+            'proposal': Proposal.objects.get(id=proposalID),
+        }
+        return render(request, 'proposal.html', context)
 def addPortfolio(request):
     print(request)
     if request.method=='POST':
@@ -164,7 +170,7 @@ def addPortfolio(request):
                 name = request.POST['name'],
                 owner= User.objects.get(name="alex"),
             )
-            return redirect('/')
+            return redirect('/admin')
 
 def addAccount(request):
     print(request)
@@ -179,7 +185,7 @@ def addAccount(request):
                 name = request.POST['accountName'],
                 portfolio = Portfolio.objects.get(name="alex"),
             )
-            return redirect('/')
+            return redirect('/admin')
 
 def addProductType(request):
     print(request)
@@ -194,7 +200,7 @@ def addProductType(request):
                 name = request.POST['productTypeName'],
                 # fractionalLotsAllowed = boolean(request.POST['productTypeFractionalLotsAllowed'].lower()=='true'),
             )
-            return redirect('/')
+            return redirect('/admin')
 
 def addSecurity(request):
     print(request)
@@ -211,7 +217,7 @@ def addSecurity(request):
                 ticker = request.POST['securityTicker'],
                 productType = ProductType.objects.get(name=request.POST['securityProductType'])
             )
-            return redirect('/')
+            return redirect('/admin')
 
 def addHolding(request):
     print(request)
@@ -224,10 +230,9 @@ def addHolding(request):
         # else:
             newHolding = Holding.objects.create(
                 security = Security.objects.get(ticker=request.POST['holdingTicker']),
-                account = Portfolio.objects.get(id=request.session['portfolioID']).accounts.get(
-                            name=request.POST['holdingAccount'])
+                account = Account.objects.get(name=request.POST['holdingAccount']),
             )
-            return redirect('/')
+            return redirect('/admin')
 
 def addLot(request):
     print(request)
@@ -241,11 +246,12 @@ def addLot(request):
             newLot = TaxLot.objects.create(
                 holding = Holding.objects.get(
                     security=Security.objects.get(ticker=request.POST['ticker']),
-                    account=Portfolio.objects.get(name="alex").accounts.get(name="testAccount")
+                    account=Account.objects.get(name="alex")
                 ), units = request.POST['units'],
                 totalFederalCost = request.POST['totalFederalCost'],
                 totalStateCost = request.POST['totalStateCost'],
             )
-            return redirect('/')
+            return redirect('/admin')
 
-
+def admin(request):
+    return render(request, 'index.html')

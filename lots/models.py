@@ -134,21 +134,33 @@ class TaxLot(models.Model):
     def __str__(self):
         return (f"Lot Number: {self.number}, Ticker: {self.holding.security.ticker}, Units: {self.units}, Cost: {self.totalFederalCost}")
 
-
-class DraftPortfolio(models.Model):
-    name = models.CharField(max_length=50)
+class Proposal(models.Model):
+    name = models.CharField(max_length=50, blank=True, default="")
     number = models.CharField(max_length=50, default=uuid.uuid4)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
-    project = models.ForeignKey(Project, related_name="draftPortfolios", on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, related_name="proposals", on_delete=models.CASCADE)
     
+    # accounts
+    # draft portfolios
+
+    def __str__(self):
+        return (f"Proposal Name: {self.name}, Proposal Number: {self.number}")
+
+class DraftPortfolio(models.Model):
+    name = models.CharField(max_length=50, blank=True, default="")
+    number = models.CharField(max_length=50, default=uuid.uuid4)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+    proposal = models.ForeignKey(Proposal, related_name="draftPortfolios", on_delete=models.CASCADE)
+    # project = models.ForeignKey(Project, related_name="draftPortfolios", on_delete=models.CASCADE)
     # accounts
 
     def __str__(self):
         return (f"Draft Portfolio Name: {self.name}, Draft Portfolio Number: {self.number}")
 
 class DraftAccount(models.Model):
-    name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50, blank=True, default="")
     number = models.CharField(max_length=50, default=uuid.uuid4)
     draftPortfolio = models.ForeignKey(DraftPortfolio, related_name="draftAccounts", on_delete=models.CASCADE)
     createdAt = models.DateTimeField(auto_now_add=True)

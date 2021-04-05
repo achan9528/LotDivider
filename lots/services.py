@@ -125,6 +125,10 @@ def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
                     sharesToDistribute -= sharesToDistribute
                     portfolioQueue.append(currentPortfolio)
                 portfolioQueue.appendleft(currentPortfolio)
+
+        # for p in portfolioQueue:
+        #     print("Portfolio")
+        #     print(p)
         portfolioQueue.clear()
         portfolioQueue = deque(portfolios)
         # Case 1: If the number of shares is less than
@@ -175,6 +179,14 @@ def splitPortfolio(accountID, method, numberOfPortfolios, holdingsDict):
 
             #Case d: if the target shares is even and you're
             # dividing it amongst an even number of portfolios
+    # Proposal.objects.create()
+    # proposal = Proposal.objects.create()
+    # for portfolio in portfolioQueue:
+    #     # print (portfolio)
+    #     for holding in portfolio.keys:
+    #         if key != 'totalCost' and key != 'totalShares':
+    #             print(key)
+
     print(portfolioQueue)
     return "test"
 
