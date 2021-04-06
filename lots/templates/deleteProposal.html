@@ -9,17 +9,15 @@
 </head>
 
 <body>
-    <h1>Proposal Name: {{ proposal.name }}</h1>
-    <h2>{{ proposal.number }}</h2>
-    <a href="/proposals/{{proposal.id}}/">Back</a>
+    <h1>Are you sure you want to delete this proposal?</h1>
+    <ul>
+        <li>Proposal Name: {{ proposal.name }}</li>
+        <li>{{ proposal.number }}</li>
+    </ul>
+    <a href="/proposals/{{proposal.id}}/edit">Edit</a>
+    <a href="/projects/{{proposal.project.id}}/">Back</a>
     <a href="/dashboard/">Dashboard</a>
     <a href="/logout/">Logout</a>
-
-    <form method="POST" action="/proposals/{{proposal.id}}/edit/">
-        {% csrf_token %}
-        <input name="proposalName" value={{proposal.name}}></input>
-        <button>Change Proposal Name</button>
-    </form>
     {%for portfolio in proposal.draftPortfolios.all %}
     <h2>{{portfolio.name}}</h2>
     <h2>{{portfolio.number}}</h2>
@@ -48,6 +46,11 @@
         </tbody>
     </table>
     {%endfor%}
+    <form method="POST" action="/proposals/{{proposal.id}}/delete/">
+        {% csrf_token %}
+        <input type="hidden" name="_method" value="delete">
+        <button>Delete</button>
+    </form>
 </body>
 
 </html>

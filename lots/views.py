@@ -123,6 +123,19 @@ def projectDashboard(request, id):
         messages.error(request, 'Please login!')
         return redirect('/')
 
+def selectPortfolio(request, projectID):
+    if validUser(request):
+        if request.method == 'GET':
+            project = Project.objects.get(id=projectID)
+            portfolios = Portfolio.objects.all()
+            context = {
+                'project': project,
+                'portfolios': portfolios,
+            }
+            return render(request, 'portfolios.html', context)
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
 
 def portfolioView(request, projectID, portfolioID):
     if validUser(request):
@@ -178,19 +191,19 @@ def newProposal(request, projectID, portfolioID, accountID):
                 holdingsDict=holdingsDict,
             )
             # return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
-            return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/' + str(proposal.id) + "/")
+            return redirect('/proposals/' + str(proposal.id) + "/")
     else:
         messages.error(request, 'Please login!')
         return redirect('/')
 
-def proposals(request, projectID, portfolioID, accountID, proposalID):
+def viewProposal(request, proposalID):
     if validUser(request):
         if request.method == 'GET':
             context = {
-                'project': Project.objects.get(id=projectID),
-                'portfolio': Portfolio.objects.get(id=portfolioID),
-                'account': Account.objects.get(id=accountID),
-                "holdings" : LotService.getHoldings(accountID),
+                # 'project': Project.objects.get(id=projectID),
+                # 'portfolio': Portfolio.objects.get(id=portfolioID),
+                # 'account': Account.objects.get(id=accountID),
+                # "holdings" : LotService.getHoldings(accountID),
                 'proposal': Proposal.objects.get(id=proposalID),
             }
             return render(request, 'proposal.html', context)
@@ -209,7 +222,23 @@ def editProposal(request, proposalID):
             proposal = Proposal.objects.get(id=proposalID)
             proposal.name = request.POST['proposalName']
             proposal.save()
-            return redirect('/proposals/' + str(proposalID) + "/")
+            return redirect('/proposals/' + str(proposalID) + '/')
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
+
+def deleteProposal(request, proposalID):
+    if validUser(request):
+        if request.method == 'GET':
+            context = {
+                'proposal': Proposal.objects.get(id=proposalID)
+            }
+            return render(request, 'deleteProposal.html', context)
+        if request.method == 'POST':
+            if request.POST['_method'] == 'delete':
+                projectID = Proposal.objects.get(id=proposalID).project.id
+                Proposal.objects.get(id=proposalID).delete()
+                return redirect('/projects/' + str(projectID) + '/')    
     else:
         messages.error(request, 'Please login!')
         return redirect('/')
@@ -240,7 +269,7 @@ def addAccount(request):
         # else:
             newAccount = Account.objects.create(
                 name = request.POST['accountName'],
-                portfolio = Portfolio.objects.get(name="test"),
+                portfolio = Portfolio.objects.get(name=request.POST['portfolioName']),
             )
             return redirect('/admin')
 
@@ -287,7 +316,8 @@ def addHolding(request):
         # else:
             newHolding = Holding.objects.create(
                 security = Security.objects.get(ticker=request.POST['holdingTicker']),
-                account = Account.objects.get(name=request.POST['holdingAccount']),
+                account = Portfolio.objects.get(name=request.POST['holdingPortfolio']).
+                accounts.get(name=request.POST['holdingAccount']),
             )
             return redirect('/admin')
 
@@ -303,7 +333,8 @@ def addLot(request):
             newLot = TaxLot.objects.create(
                 holding = Holding.objects.get(
                     security=Security.objects.get(ticker=request.POST['ticker']),
-                    account=Account.objects.get(name="test")
+                    account = Portfolio.objects.get(name=request.POST['portfolio']).
+                    accounts.get(name=request.POST['account'])
                 ), units = request.POST['units'],
                 totalFederalCost = request.POST['totalFederalCost'],
                 totalStateCost = request.POST['totalStateCost'],

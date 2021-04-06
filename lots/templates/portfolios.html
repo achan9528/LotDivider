@@ -12,10 +12,11 @@
     <h1>{{ project.name }}</h1>
     <h2>{{ project.number }}</h2>
     <a href="/projects/{{project.id}}/portfolios/">New Proposal</a>
+    <a href="/projects/{{project.id}}/">Project Dashboard</a>
     <a href="/dashboard/">Dashboard</a>
     <a href="/logout/">Logout</a>
     <table>
-        <h2>Portfolios used in this project:</h2>
+        <h2>Select Portfolio for New Proposal:</h2>
         <thead>
             <tr>
                 <td>Portfolio Name</td>
@@ -35,30 +36,6 @@
             {% endfor %}
         </tbody>
     </table>
-    <table>
-        <h2>Proposals</h2>
-        <thead>
-            <tr>
-                <td>Proposal Id</td>
-                <td>Proposal Name</td>
-                <td>Actions</td>
-            </tr>
-        </thead>
-        {% for proposal in project.proposals.all %}
-        <tbody>
-            <tr>
-                <td>{{proposal.id}}</td>
-                <td>{{proposal.name}}</td>
-                <td>
-                    <a href="/proposals/{{proposal.id}}/">View</a>
-                    <a href="/proposals/{{proposal.id}}/edit/">Edit</a>
-                    <a href="/proposals/{{proposal.id}}/delete/">Delete</a>
-                </td>
-            </tr>
-        </tbody>
-        {% endfor %}
-    </table>
-
 </body>
 
 </html>

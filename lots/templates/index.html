@@ -24,6 +24,10 @@
         {% csrf_token %}
         <h2>Add Account</h2>
         <div>
+            <label>Portfolio Name</label>
+            <input type="text" name="portfolioName"></input>
+        </div>
+        <div>
             <label>Account Name</label>
             <input type="text" name="accountName"></input>
         </div>
@@ -71,6 +75,10 @@
             <input type="text" name="holdingTicker"></input>
         </div>
         <div>
+            <label>Portfolio Name</label>
+            <input type="text" name="holdingPortfolio"></input>
+        </div>
+        <div>
             <label>Account Name</label>
             <input type="text" name="holdingAccount"></input>
         </div>
@@ -79,6 +87,14 @@
     <form method="POST" action="/lots/add/">
         {% csrf_token %}
         <h2>Add Lot</h2>
+        <div>
+            <label>Portfolio Name</label>
+            <input type="text" name="portfolio"></input>
+        </div>
+        <div>
+            <label>Account</label>
+            <input type="text" name="account"></input>
+        </div>
         <div>
             <label>Ticker</label>
             <input type="text" name="ticker"></input>
