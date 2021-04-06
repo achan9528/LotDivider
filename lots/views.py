@@ -113,7 +113,14 @@ def projectDashboard(request, id):
     if validUser(request):
         if request.method == 'GET':
             project = Project.objects.get(id=id)
-            portfolios = Portfolio.objects.all()
+            # portfolios = Portfolio.objects.all()
+            portfolios = []
+            for proposal in project.proposals.all():
+                
+                num = proposal.draftPortfolios.first().draftAccounts.first().draftHoldings.first().draftTaxLots.first().number
+                portfolio = TaxLot.objects.get(number=num).holding.account.portfolio
+                if portfolio not in portfolios:
+                    portfolios.append(portfolio)
             context = {
                 'project': project,
                 'portfolios': portfolios,
