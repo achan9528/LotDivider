@@ -207,6 +207,8 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                     )
 
     # print(portfolioQueue)
+    proposal.name = "Proposal " + str(proposal.id)
+    proposal.save()
     return proposal
 
 def getLots(targetShares, holding, method="HIFO"):
