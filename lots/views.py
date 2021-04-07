@@ -250,6 +250,18 @@ def deleteProposal(request, proposalID):
         messages.error(request, 'Please login!')
         return redirect('/')
 
+def newPortfolio(request):
+    if validUser(request):
+        if request.method == 'GET':
+            context = {
+
+            }
+            return render(request, 'newPortfolio.html', context)
+        # if request.method == 'POST':
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
+
 def addPortfolio(request):
     print(request)
     if request.method=='POST':

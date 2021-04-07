@@ -15,6 +15,7 @@ urlpatterns = [
     path('proposals/<int:proposalID>/', views.viewProposal),
     path('proposals/<int:proposalID>/edit/', views.editProposal),
     path('proposals/<int:proposalID>/delete/', views.deleteProposal),
+    path('portfolios/new/', views.newPortfolio),
     path('portfolios/add/', views.addPortfolio),
     path('accounts/add/', views.addAccount),
     path('security/add/', views.addSecurity),

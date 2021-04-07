@@ -1,0 +1,65 @@
+.multiStepForm{
+    display: block;
+    margin: 10% auto;
+    width: 80%;
+}
+
+.multiStepForm .section{
+    display: none;
+    margin: auto;
+    width: 100%;
+    /* animation: slideIn linear .5s, fadeIn linear .5s; */
+}
+
+.fsIn{
+    animation: slideIn linear .25s, fadeIn linear .25s
+}
+
+.fsOut{
+    animation: slideOut linear 2s, fadeOut linear 2s
+}
+
+@keyframes slideIn {
+    0% {
+        transform: translateX(25%);
+    }
+    100% {
+        transform: translateX(0%);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0%;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
+@keyframes slideOut{
+    0% {
+        transform: translateX(0%);
+    }
+    100% {
+        transform: translateX(-25%);
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 100%;
+    }
+    100% {
+        opacity: 0%;
+    }
+}
+
+.multiStepForm .section table {
+    width: 100%;
+}
+
+.multiStepForm .section table tr td input{
+    width: 96%;
+    padding: 2%
+}

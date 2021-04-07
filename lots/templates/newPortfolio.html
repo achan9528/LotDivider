@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static '/lots.css' %}"></link>
+    <title>Lot Divider</title>
+</head>
+
+<body>
+    <h1>Add A New Portfolio</h1>
+    <div>
+        <a href="/projects/{{project.id}}/portfolios/">New Proposal</a>
+        <a href="/portfolios/new">Add a Portfolio</a>
+        <a href="/dashboard/">Dashboard</a>
+        <a href="/logout/">Logout</a>
+    </div>
+    <form class="multiStepForm">
+        <div class="section">
+            <h2>Create a Portfolio</h2>
+            <div>
+                <label for="portfolioName">Portfolio Name:</label>
+                <input type="text" placeholder="Portfolio Name" name="portfolioName">
+            </div>
+        </div>
+        <div class="section">
+            <h2>Add Accounts</h2>
+            <div>
+                <label for="accountName">Account Name:</label>
+                <input type="text" placeholder="Account Name" name="accountName">
+            </div>
+        </div>
+        <div class="section">
+            <h2>Add Tax Lots</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <td>Tax Lot Number</td>
+                        <td>Ticker</td>
+                        <td>Units</td>
+                        <td>Cost</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <input name="taxLot">
+                        </td>
+                        <td>
+                            <input name="ticker">
+                        </td>
+                        <td>
+                            <input name="units">
+                        </td>
+                        <td>
+                            <input name="cost">
+                        </td>
+                    </tr>
+                </tbody>
+                <button>Add Another Lot</button>
+            </table>
+        </div>
+        <button id="prev">Back</button>
+        <button id="next">Next</button>
+        <button>Save New Portfolio</button>
+    </form>
+</body>
+<script>
+    let form = document.getElementsByTagName("form")[0];
+    let sections = document.getElementsByClassName("section")
+    let currentSection = 0;
+    const displaySection = (sectionNumber) => {
+        console.log(sectionNumber);
+        // sections[sectionNumber].style.opacity = '100%';
+        sections[sectionNumber].style.display = 'block';
+        sections[sectionNumber].animate([
+            {
+                opacity: '0%',
+                transform: 'translateX(25%)',
+            }, {
+                opacity: '100%',
+                transform: 'translateX(0%)',
+            }
+        ], {
+            duration: 300,
+            direction: 'normal',
+        })
+    }
+
+    document.getElementById("next").addEventListener("click",(e)=>{
+        e.preventDefault();
+        console.log("next button pressed!");
+        if (!(currentSection == sections.length - 1)){
+            sections[currentSection].animate([
+                {
+                    // opacity: '100%',
+                    transform: 'translateX(0%)',
+                },
+                {
+                    // opacity: '0%',
+                    transform: 'translateX(-25%)',
+                }
+            ], {
+                duration: 300,
+                direction: 'normal',
+            } )
+            setTimeout(()=>{
+                sections[currentSection].style.display = "none";
+                currentSection++;
+                displaySection(currentSection);
+            }, 250);
+            
+            // setTimeout(()=>{
+            //     currentSection++;
+            //     displaySection(currentSection);
+            // }, 1000)
+        }
+    })
+    document.getElementById("prev").addEventListener("click",(e)=>{
+        e.preventDefault();
+        console.log("prev button pressed!");
+        if (!(currentSection == 0)){
+            sections[currentSection].animate([
+                {
+                    opacity: '100%',
+                    // transform: 'translateX(0%)',
+                },
+                {
+                    opacity: '0%',
+                    // transform: 'translateX(25%)',
+                }
+            ], {
+                duration: 300,
+                direction: 'normal',
+            })
+            setTimeout(()=>{
+                sections[currentSection].style.display = 'none';
+                currentSection--;
+                displaySection(currentSection);
+            }, 250)
+            
+        }
+        
+    })
+
+    displaySection(0);
+
+</script>
+</html>
