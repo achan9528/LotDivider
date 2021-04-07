@@ -72,27 +72,59 @@
     let form = document.getElementsByTagName("form")[0];
     let sections = document.getElementsByClassName("section")
     let currentSection = 0;
-    const displaySection = (sectionNumber) => {
+    const displaySection = (sectionNumber, animation=0) => {
         console.log(sectionNumber);
+        let duration = 200
         // sections[sectionNumber].style.opacity = '100%';
         sections[sectionNumber].style.display = 'block';
-        sections[sectionNumber].animate([
-            {
-                opacity: '0%',
-                transform: 'translateX(25%)',
-            }, {
-                opacity: '100%',
-                transform: 'translateX(0%)',
-            }
-        ], {
-            duration: 300,
-            direction: 'normal',
-        })
+        if (animation == 1){
+            sections[sectionNumber].animate([
+                {
+                    // opacity: '0%',
+                    transform: 'translateX(25%)',
+                }, {
+                    // opacity: '100%',
+                    transform: 'translateX(0%)',
+                }
+            ], {
+                duration: duration,
+                direction: 'normal',
+            })
+        } else if (animation == -1){
+            sections[sectionNumber].animate([
+                {
+                    // opacity: '0%',
+                    transform: 'translateX(-25%)',
+                }, {
+                    // opacity: '100%',
+                    transform: 'translateX(0%)',
+                }
+            ], {
+                duration: duration,
+                direction: 'normal',
+            })
+        }
+        // } else {
+        //     sections[sectionNumber].animate([
+        //         {
+        //             opacity: '0%',
+        //             // transform: 'translateX(-25%)',
+        //         }, {
+        //             opacity: '100%',
+        //             // transform: 'translateX(0%)',
+        //         }
+        //     ], {
+        //         duration: duration,
+        //         direction: 'normal',
+        //     })
+        // }
+        
     }
 
     document.getElementById("next").addEventListener("click",(e)=>{
         e.preventDefault();
         console.log("next button pressed!");
+        let duration = 200
         if (!(currentSection == sections.length - 1)){
             sections[currentSection].animate([
                 {
@@ -104,14 +136,14 @@
                     transform: 'translateX(-25%)',
                 }
             ], {
-                duration: 300,
+                duration: duration,
                 direction: 'normal',
             } )
             setTimeout(()=>{
                 sections[currentSection].style.display = "none";
                 currentSection++;
-                displaySection(currentSection);
-            }, 250);
+                displaySection(currentSection, 1);
+            }, duration - 50);
             
             // setTimeout(()=>{
             //     currentSection++;
@@ -122,25 +154,26 @@
     document.getElementById("prev").addEventListener("click",(e)=>{
         e.preventDefault();
         console.log("prev button pressed!");
+        let duration = 200;
         if (!(currentSection == 0)){
             sections[currentSection].animate([
                 {
-                    opacity: '100%',
-                    // transform: 'translateX(0%)',
+                    // opacity: '100%',
+                    transform: 'translateX(0%)',
                 },
                 {
-                    opacity: '0%',
-                    // transform: 'translateX(25%)',
+                    // opacity: '0%',
+                    transform: 'translateX(25%)',
                 }
             ], {
-                duration: 300,
+                duration: duration,
                 direction: 'normal',
             })
             setTimeout(()=>{
                 sections[currentSection].style.display = 'none';
                 currentSection--;
-                displaySection(currentSection);
-            }, 250)
+                displaySection(currentSection, -1);
+            }, duration - 50)
             
         }
         
