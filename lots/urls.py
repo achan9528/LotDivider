@@ -24,5 +24,6 @@ urlpatterns = [
     path('lots/add/', views.addLot),
     path('admin', views.admin),
     path('logout/', views.logout),
+    path('test', views.test),
 ]
 

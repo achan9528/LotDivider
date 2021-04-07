@@ -262,6 +262,18 @@ def newPortfolio(request):
         messages.error(request, 'Please login!')
         return redirect('/')
 
+def test(request):
+    if validUser(request):
+        if request.method == 'POST':
+            print(request.FILES)
+            print(request.FILES['fileUpload'])
+            LotService.readExcel(request.FILES['fileUpload'])
+            return redirect('/portfolios/new')
+        # if request.method == 'POST':
+    else:
+        messages.error(request, 'Please login!')
+        return redirect('/')
+
 def addPortfolio(request):
     print(request)
     if request.method=='POST':

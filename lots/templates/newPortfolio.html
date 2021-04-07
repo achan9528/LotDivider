@@ -18,7 +18,8 @@
         <a href="/dashboard/">Dashboard</a>
         <a href="/logout/">Logout</a>
     </div>
-    <form class="multiStepForm">
+    <form enctype="multipart/form-data" class="multiStepForm" method="POST" action="/test">
+        {% csrf_token %}
         <div class="section">
             <h2>Create a Portfolio</h2>
             <div>
@@ -62,6 +63,10 @@
                 </tbody>
                 <button>Add Another Lot</button>
             </table>
+        </div>
+        <div>
+            <label>File Upload:</label>
+            <input type="file" name="fileUpload"></input>
         </div>
         <button id="prev">Back</button>
         <button id="next">Next</button>

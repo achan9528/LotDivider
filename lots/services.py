@@ -1,6 +1,12 @@
 from .models import *
 from decimal import Decimal
 from collections import deque
+import pandas as pd
+
+def readExcel(file):
+    df = pd.read_excel(file)
+    print(df)
+
 
 def getHoldings(accountID):
     holdings = []
