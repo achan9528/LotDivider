@@ -115,15 +115,14 @@ def projectDashboard(request, id):
             project = Project.objects.get(id=id)
             # portfolios = Portfolio.objects.all()
             portfolios = []
-            for proposal in project.proposals.all():
-                
-                num = proposal.draftPortfolios.first().draftAccounts.first().draftHoldings.first().draftTaxLots.first().number
-                portfolio = TaxLot.objects.get(number=num).holding.account.portfolio
-                if portfolio not in portfolios:
-                    portfolios.append(portfolio)
+            # for proposal in project.proposals.all():
+            #     num = proposal.draftPortfolios.first().draftAccounts.first().draftHoldings.first().draftTaxLots.first().number
+            #     portfolio = TaxLot.objects.get(number=num).holding.account.portfolio
+            #     if portfolio not in portfolios:
+            #         portfolios.append(portfolio)
             context = {
                 'project': project,
-                'portfolios': portfolios,
+                # 'portfolios': portfolios,
             }
             return render(request, 'projectDashboard.html', context)
     else:
@@ -267,7 +266,7 @@ def test(request):
         if request.method == 'POST':
             print(request.FILES)
             print(request.FILES['fileUpload'])
-            LotService.readExcel(request.FILES['fileUpload'])
+            LotService.uploadPortfolio(request.FILES['fileUpload'], request.POST['portfolioName'], request.POST['accountName'])
             return redirect('/portfolios/new')
         # if request.method == 'POST':
     else:

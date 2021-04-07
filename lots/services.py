@@ -3,6 +3,78 @@ from decimal import Decimal
 from collections import deque
 import pandas as pd
 
+def lots(ticker, accountID, number, cusip, units, date, totalFed, totalState):
+    holdingID = createHolding(ticker, accountID)
+    createTaxLot(number, ticker, cusip, units, date, totalFed, totalState, holdingID)
+
+def uploadPortfolio(file, portfolioName, accountName):
+    portfolioID = createPortfolio(portfolioName, 1)
+    accountID = createAccount(accountName, portfolioID)
+    df = pd.read_excel(file)
+    df.fillna("missing", inplace=True)
+    print(df)
+    df.apply(lambda x: lots(x['Ticker'], accountID,x['Tax Lot Number'], x['CUSIP'], x['Units'], x['Date Acquired'], x['Total Federal Cost'], x['Total State Cost']), axis=1)
+
+def createPortfolio(name, ownerID):
+    if len(Portfolio.objects.filter(name=name)) == 0:
+        newPortfolio = Portfolio.objects.create(
+            name=name,
+            owner=User.objects.get(id=ownerID)
+        )
+        return newPortfolio.id
+    else:
+        portfolio = Portfolio.objects.get(
+            name=name,
+            owner=User.objects.get(id=ownerID)
+        )
+        return portfolio.id
+
+def createAccount(name, portfolioID):
+    if len(Account.objects.filter(name=name,portfolio=Portfolio.objects.get(id=portfolioID))) == 0:
+        newAccount = Account.objects.create(
+            name=name,
+            portfolio=Portfolio.objects.get(id=portfolioID)
+        )
+        return newAccount.id
+    else:
+        account = Account.objects.get(
+            name=name,
+            portfolio=Portfolio.objects.get(id=portfolioID)
+        )
+        return account.id
+
+def createHolding(ticker, accountID):
+    if len(Holding.objects.filter(security=Security.objects.get(ticker=ticker),account=Account.objects.get(id=accountID))) == 0:
+        newHolding = Holding.objects.create(
+            security=Security.objects.get(ticker=ticker),
+            account=Account.objects.get(id=accountID),
+        )
+        return newHolding.id
+    else:
+        holding = Holding.objects.get(
+            security=Security.objects.get(ticker=ticker),
+            account=Account.objects.get(id=accountID),
+        )
+        return holding.id
+
+def createTaxLot(number, ticker, cusip, units, date, totalFed, totalState, holdingID):
+    if number == "missing":
+        TaxLot.objects.create(
+            units=units,
+            totalFederalCost=totalFed,
+            totalStateCost=totalState,
+            holding=Holding.objects.get(id=holdingID),
+        )
+    else: 
+        if len(TaxLot.objects.filter(number=number, holding=Holding.objects.get(id=holdingID))) == 0:
+            TaxLot.objects.create(
+                number=number,
+                units=units,
+                totalFederalCost=totalFed,
+                totalStateCost=totalState,
+                holding=Holding.objects.get(id=holdingID),
+            )
+
 def readExcel(file):
     df = pd.read_excel(file)
     print(df)
@@ -59,7 +131,7 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
         print(ticker + "used lots:")
         print(tempDict["usedLots"])
         print("\n")
-
+        print('target shares: ' + targetShares)
         # print(ticker + "remaining lots:")
         # print(returnDict["remainingLots"])
         # print("\n")
@@ -113,16 +185,24 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                 # in the lot, then you will have to determine
                 # that the first two accounts in the queue
                 # will receive the shares.
+            print('lot: ' + currentLotKey)
+            print('shares to distribute: ' + str(sharesToDistribute))
             while sharesToDistribute > 0:
                 # choose which account will receive the
                 # shares in the lot based on the queue
                 currentPortfolio = portfolioQueue.pop()
-                # print(currentPortfolio[ticker])
-                if remainderShares > 0:
+
+                if remainderShares > 0 and remainderShares <= sharesToDistribute:
                     currentPortfolio[ticker][currentLotKey] += remainderShares
                     currentPortfolio[ticker]['totalShares'] += remainderShares
                     sharesToDistribute -= remainderShares
                     remainderShares -= remainderShares
+                    portfolioQueue.appendleft(currentPortfolio)
+                elif remainderShares > 0 and remainderShares > sharesToDistribute:
+                    currentPortfolio[ticker][currentLotKey] += sharesToDistribute
+                    currentPortfolio[ticker]['totalShares'] += sharesToDistribute
+                    remainderShares -= sharesToDistribute
+                    sharesToDistribute -= sharesToDistribute
                     portfolioQueue.append(currentPortfolio)
                 elif sharesToDistribute > 1:
                     currentPortfolio[ticker][currentLotKey] += 1
@@ -136,12 +216,10 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                     sharesToDistribute -= sharesToDistribute
                     portfolioQueue.append(currentPortfolio)
 
-        # for p in portfolioQueue:
-        #     print("Portfolio")
-        #     print(p)
-        # print(portfolioQueue)
-        portfolioQueue.clear()
-        portfolioQueue = deque(portfolios)
+        # reset Portfolio Queue
+        # portfolioQueue.clear()
+        # portfolioQueue = deque(portfolios)
+
         # Case 1: If the number of shares is less than
         # the number of portfolios
 
