@@ -216,9 +216,9 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                     sharesToDistribute -= sharesToDistribute
                     portfolioQueue.append(currentPortfolio)
 
-        # reset Portfolio Queue
-        # portfolioQueue.clear()
-        # portfolioQueue = deque(portfolios)
+        # reset Portfolio Queue for next ticker
+        portfolioQueue.clear()
+        portfolioQueue = deque(portfolios)
 
         # Case 1: If the number of shares is less than
         # the number of portfolios
