@@ -4,4 +4,5 @@ lots/__pycache__
 lots/migrations
 db.sqlite3
 toDo.txt
+chromedriver
 .gitignore

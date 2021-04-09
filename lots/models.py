@@ -1,5 +1,4 @@
 from django.db import models
-from .models import *
 # from . import managers as ModelManagers
 import uuid
 import re

@@ -1,3 +1,23 @@
+table {
+    font-family: Arial, Helvetica, sans-serif;
+    width: 80%;
+    margin: auto;
+    text-align: center;
+}
+
+table th{
+    background-color: green;
+    color: white;
+}
+
+table tr:nth-child(even){
+    background-color: lightgrey;
+}
+
+table tr:hover{
+    background-color: lightblue;
+}
+
 .multiStepForm{
     display: block;
     margin: 10% auto;

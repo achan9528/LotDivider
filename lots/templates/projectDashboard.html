@@ -5,6 +5,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static './lots.css'%}">
     <title>Lot Divider</title>
 </head>
 
@@ -14,13 +16,13 @@
     <a href="/projects/{{project.id}}/portfolios/">New Proposal</a>
     <a href="/dashboard/">Dashboard</a>
     <a href="/logout/">Logout</a>
-    <table>
+    <!-- <table>
         <h2>Portfolios used in this project:</h2>
         <thead>
             <tr>
-                <td>Portfolio Name</td>
-                <td>Portfolio Number</td>
-                <Td>Action</Td>
+                <th>Portfolio Name</th>
+                <th>Portfolio Number</th>
+                <th>Action</th>
             </tr>
         </thead>
         <tbody>
@@ -34,18 +36,18 @@
             </tr>
             {% endfor %}
         </tbody>
-    </table>
+    </table> -->
     <table>
         <h2>Proposals</h2>
         <thead>
             <tr>
-                <td>Proposal Id</td>
-                <td>Proposal Name</td>
-                <td>Actions</td>
+                <th>Proposal Id</th>
+                <th>Proposal Name</th>
+                <th>Actions</th>
             </tr>
         </thead>
-        {% for proposal in project.proposals.all %}
         <tbody>
+            {% for proposal in project.proposals.all %}
             <tr>
                 <td>{{proposal.id}}</td>
                 <td>{{proposal.name}}</td>
@@ -55,8 +57,8 @@
                     <a href="/proposals/{{proposal.id}}/delete/">Delete</a>
                 </td>
             </tr>
+            {% endfor %}
         </tbody>
-        {% endfor %}
     </table>
 
 </body>
