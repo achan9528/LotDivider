@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 class LotTest(TestCase):
     @classmethod
-    def setUp(cls):
+    def setUpTestData(cls):
         newUser = User.objects.create(
             name = "stephanie",
             alias = "schan",
