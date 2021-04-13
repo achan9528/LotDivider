@@ -3,8 +3,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from decimal import Decimal
 from .models import *
+from . import queries as LotQueries
 from . import services as LotService
 from .forms import *
+from django.core.serializers import serialize
 import bcrypt
 
 def validUser(request):
@@ -212,6 +214,7 @@ def viewProposal(request, proposalID):
                 # "holdings" : LotService.getHoldings(accountID),
                 'proposal': Proposal.objects.get(id=proposalID),
             }
+            print(LotQueries.summarizeProposal(Proposal.objects.get(id=proposalID)))
             return render(request, 'proposal.html', context)
     else:
         messages.error(request, 'Please login!')
