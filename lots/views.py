@@ -209,10 +209,6 @@ def viewProposal(request, proposalID):
         if request.method == 'GET':
             proposalSummary = LotQueries.summarizeProposal(Proposal.objects.get(id=proposalID))
             context = {
-                # 'project': Project.objects.get(id=projectID),
-                # 'portfolio': Portfolio.objects.get(id=portfolioID),
-                # 'account': Account.objects.get(id=accountID),
-                # "holdings" : LotService.getHoldings(accountID),
                 'proposal': Proposal.objects.get(id=proposalID),
                 'prpoosalSummary': proposalSummary,
             }
