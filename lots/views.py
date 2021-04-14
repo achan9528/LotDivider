@@ -207,14 +207,16 @@ def newProposal(request, projectID, portfolioID, accountID):
 def viewProposal(request, proposalID):
     if validUser(request):
         if request.method == 'GET':
+            proposalSummary = LotQueries.summarizeProposal(Proposal.objects.get(id=proposalID))
             context = {
                 # 'project': Project.objects.get(id=projectID),
                 # 'portfolio': Portfolio.objects.get(id=portfolioID),
                 # 'account': Account.objects.get(id=accountID),
                 # "holdings" : LotService.getHoldings(accountID),
                 'proposal': Proposal.objects.get(id=proposalID),
+                'prpoosalSummary': proposalSummary,
             }
-            print(LotQueries.summarizeProposal(Proposal.objects.get(id=proposalID)))
+            
             return render(request, 'proposal.html', context)
     else:
         messages.error(request, 'Please login!')
