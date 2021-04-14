@@ -1,4 +1,4 @@
-from django.db.models import Sum
+from django.db.models import Sum, F
 from .models import *
 
 def summarizeProposal(proposal):
@@ -10,10 +10,13 @@ def summarizeProposal(proposal):
     for draftPortfolio in proposal.draftPortfolios.all():
         for draftAccount in draftPortfolio.draftAccounts.all():
             totalsDictionary = {}
-            for holding in draftAccount.draftHoldings.all():
-                totalUnits = holding.draftTaxLots.aggregate(totalUnits=Sum('units'))
-                totalsDictionary[holding.security.ticker] = totalUnits
-            
+            for draftHolding in draftAccount.draftHoldings.all():
+                referencedLot = draftHolding.draftTaxLots.first().number
+                referencedHolding = TaxLot.objects.get(number=referencedLot).holding.id
+                annotatedSet = Holding.objects.get(id=referencedHolding).taxLots.annotate(cps=F("totalFederalCost")/F("units"))
+
+                totalUnits = draftHolding.draftTaxLots.aggregate(totalUnits=Sum('units'))
+                totalsDictionary[draftHolding.security.ticker] = totalUnits
             unitTotals[draftPortfolio.id] = totalsDictionary
 
     return unitTotals    
