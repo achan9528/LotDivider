@@ -194,6 +194,7 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                         number = lot,
                         units = shares,
                         draftHolding = draftHolding,
+                        referencedLot = TaxLot.objects.get(number=lot),
                     )
 
     # print(portfolioQueue)

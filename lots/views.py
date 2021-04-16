@@ -210,9 +210,10 @@ def viewProposal(request, proposalID):
             proposalSummary = LotQueries.summarizeProposal(Proposal.objects.get(id=proposalID))
             context = {
                 'proposal': Proposal.objects.get(id=proposalID),
-                'prpoosalSummary': proposalSummary,
+                'proposalSummary': proposalSummary,
+                'test': {'test': 'test','test2':{'test3':'test3'}},
             }
-            
+            # print(proposalSummary)
             return render(request, 'proposal.html', context)
     else:
         messages.error(request, 'Please login!')

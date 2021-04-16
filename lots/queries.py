@@ -1,4 +1,4 @@
-from django.db.models import Sum, F
+from django.db.models import Sum, F, Value, FloatField
 from .models import *
 
 def summarizeProposal(proposal):
@@ -15,11 +15,10 @@ def getDraftLotCPS(proposal):
     for draftPortfolio in proposal.draftPortfolios.all():
         for draftAccount in draftPortfolio.draftAccounts.all():
             for draftHolding in draftAccount.draftHoldings.all():
-                referencedLot = draftHolding.draftTaxLots.first().number
-                referencedHolding = TaxLot.objects.get(number=referencedLot).holding.id
-                annotatedSet = Holding.objects.get(id=referencedHolding).taxLots.annotate(cps=F("totalFederalCost")/F("units"))
-
-                returnDict[draftPortfolio.id, draftAccount.id, draftHolding.security.ticker] = annotatedSet
+                draftSet = draftHolding.draftTaxLots.annotate(cps=F("referencedLot__totalFederalCost")/F("referencedLot__units"),
+                unitsAvailable=F("referencedLot__units"), totalFederalCost=F("referencedLot__totalFederalCost"))
+                
+                returnDict[draftPortfolio.id, draftAccount.id][draftHolding.security.ticker] = draftSet
     return returnDict
 
 def getDraftTotals(proposal):

@@ -183,9 +183,7 @@ class DraftTaxLot(models.Model):
     number = models.CharField(max_length=50, default=uuid.uuid4)
     draftHolding = models.ForeignKey(DraftHolding, related_name="draftTaxLots", on_delete=models.CASCADE)
     units = models.DecimalField(max_digits=20, decimal_places=4)
-    # totalFederalCost = models.DecimalField(max_digits=20, decimal_places=2)
-    # totalStateCost = models.DecimalField(max_digits=20, decimal_places=2)
-    # acquisitionDate = models.DateTimeField(auto_now_add=True)
+    referencedLot = models.ForeignKey(TaxLot, related_name="draftTaxLotsRelated", on_delete=models.CASCADE)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
 
