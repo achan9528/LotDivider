@@ -213,7 +213,7 @@ def viewProposal(request, proposalID):
                 'proposalSummary': proposalSummary,
                 'test': {'test': 'test','test2':{'test3':'test3'}},
             }
-            # print(proposalSummary)
+            print(proposalSummary)
             return render(request, 'proposal.html', context)
     else:
         messages.error(request, 'Please login!')

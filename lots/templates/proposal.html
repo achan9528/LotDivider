@@ -10,16 +10,16 @@
 </head>
 
 <body>
-    
+
     <h1>Proposal Name: {{ proposal.name }}</h1>
     <h2>Proposal Number: {{ proposal.number }}</h2>
     <a href="/proposals/{{proposal.id}}/edit">Edit</a>
     <a href="/projects/{{proposal.project.id}}/">Back</a>
     <a href="/dashboard/">Dashboard</a>
     <a href="/logout/">Logout</a>
-    {% for draftHolding, draftLots in proposalSummary.lots.items %}
-    <h2>{{draftLots.first.draftHolding.draftAccount.draftPortfolio.name}}</h2>
-    <h2>{{draftLots.first.draftHolding.draftAccount.draftPortfolio.number}}</h2>
+    {% for key, item in proposalSummary.lots.items %}
+    <h2>Draft Portfolio Name: {{key.0.name}}</h2>
+    <h2>Draft Portfolio Number: {{key.0.number}}</h2>
     <table>
         <thead>
             <tr>
@@ -32,7 +32,8 @@
             </tr>
         </thead>
         <tbody>
-            {% for lot in draftLots.all %}
+            {% for setOfLots in item %} 
+            {% for lot in setOfLots %}
             <tr>
                 <td>{{lot.draftHolding.security.ticker}}</td>
                 <td>{{lot.number}}</td>
@@ -41,6 +42,7 @@
                 <td>{{lot.totalFederalCost}}</td>
                 <td>{{lot.cps}}</td>
             </tr>
+            {% endfor %}
             {% endfor %}
         </tbody>
     </table>

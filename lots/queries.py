@@ -14,11 +14,12 @@ def getDraftLotCPS(proposal):
 
     for draftPortfolio in proposal.draftPortfolios.all():
         for draftAccount in draftPortfolio.draftAccounts.all():
+            returnDict[draftPortfolio, draftAccount] = []
             for draftHolding in draftAccount.draftHoldings.all():
-                draftSet = draftHolding.draftTaxLots.annotate(cps=F("referencedLot__totalFederalCost")/F("referencedLot__units"),
+                draftLots = draftHolding.draftTaxLots.annotate(cps=F("referencedLot__totalFederalCost")/F("referencedLot__units"),
                 unitsAvailable=F("referencedLot__units"), totalFederalCost=F("referencedLot__totalFederalCost"))
                 
-                returnDict[draftPortfolio.id, draftAccount.id][draftHolding.security.ticker] = draftSet
+                returnDict[draftPortfolio, draftAccount].append(draftLots)
     return returnDict
 
 def getDraftTotals(proposal):
