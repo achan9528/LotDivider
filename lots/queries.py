@@ -23,7 +23,6 @@ def getDraftLotCPS(proposal):
                         output_field=DecimalField(decimal_places=4)),
                     unitsAvailable=F("referencedLot__units"), 
                     totalFederalCost=F("referencedLot__totalFederalCost"))
-                print(draftLots.values('cps'))
                 returnDict[draftPortfolio, draftAccount].append(draftLots)
     return returnDict
 

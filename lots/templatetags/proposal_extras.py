@@ -36,3 +36,21 @@ def getTotalMV(setOfLots):
     setOfLots = setOfLots.annotate(mv=F('units') * closingPrice)
     return list(setOfLots.aggregate(totalMV=Sum('mv')).values())[0]
     
+@register.filter
+def getDraftPortfolioTotalMV(allLotSets):
+    today = date.today().strftime("%Y-%m-%d")
+    totalMV = 0
+    tickers = []
+    for s in allLotSets:
+        tickers.append(
+            s.first().referencedLot.holding.security.ticker
+        )
+    
+    closingPrices = yf.download(tickers, today)['Adj Close']
+    print(closingPrices)
+    for s in allLotSets:
+        annotatedSet = s.annotate(
+            mv = F('units') * closingPrices[s.first().referencedLot.holding.security.ticker][0]
+        )
+        totalMV += list(annotatedSet.aggregate(Sum('mv')).values())[0]
+    return totalMV

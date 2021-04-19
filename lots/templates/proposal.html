@@ -39,22 +39,31 @@
             <tr>
                 <td>{{lot.draftHolding.security.ticker}}</td>
                 <td>{{lot.number}}</td>
-                <td>{{lot.units|intcomma|floatformat:4}}</td>
-                <td>{{lot.unitsAvailable|intcomma|floatformat:4}}</td>
-                <td>{{lot.totalFederalCost|intcomma|floatformat:2}}</td>
-                <td>{{lot.cps|intcomma|floatformat:2}}</td>
+                <td>{{lot.units|floatformat:4|intcomma}}</td>
+                <td>{{lot.unitsAvailable|floatformat:4|intcomma}}</td>
+                <td>{{lot.totalFederalCost|floatformat:2|intcomma}}</td>
+                <td>{{lot.cps|floatformat:2|intcomma}}</td>
             </tr>
             {% endfor %}
             <tr>
                 <td>Total</td>
                 <td></td>
-                <td>{{setOfLots|getTotalUnits|intcomma|floatformat:4}}</td>
+                <td>{{setOfLots|getTotalUnits|floatformat:4|intcomma}}</td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>${{setOfLots|getTotalMV|intcomma|floatformat:2}}</td>
+                <td>${{setOfLots|getTotalMV|floatformat:2|intcomma}}</td>
             </tr>
             {% endfor %}
+            <tr>
+                <td>Proposed Totals:</td>
+                <td></td>
+                <td>{{item|getDraftPortfolioTotalMV|floatformat:4|intcomma}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>${{item|getDraftPortfolioTotalMV|floatformat:2|intcomma}}</td>
+            </tr>
         </tbody>
     </table>
     {% endfor %}
