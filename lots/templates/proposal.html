@@ -1,4 +1,5 @@
 {% load proposal_extras %}
+{% load humanize %}
 <!DOCTYPE html>
 <html lang="en">
 
@@ -38,20 +39,20 @@
             <tr>
                 <td>{{lot.draftHolding.security.ticker}}</td>
                 <td>{{lot.number}}</td>
-                <td>{{lot.units|floatformat:2}}</td>
-                <td>{{lot.unitsAvailable|floatformat:2}}</td>
-                <td>{{lot.totalFederalCost|floatformat:2}}</td>
-                <td>{{lot.cps|floatformat:2}}</td>
+                <td>{{lot.units|intcomma|floatformat:4}}</td>
+                <td>{{lot.unitsAvailable|intcomma|floatformat:4}}</td>
+                <td>{{lot.totalFederalCost|intcomma|floatformat:2}}</td>
+                <td>{{lot.cps|intcomma|floatformat:2}}</td>
             </tr>
             {% endfor %}
             <tr>
                 <td>Total</td>
                 <td></td>
-                <td>{{setOfLots|getTotalUnits}}</td>
+                <td>{{setOfLots|getTotalUnits|intcomma|floatformat:4}}</td>
                 <td></td>
                 <td></td>
                 <td></td>
-                <td>{{setOfLots|getTotalMV}}</td>
+                <td>${{setOfLots|getTotalMV|intcomma|floatformat:2}}</td>
             </tr>
             {% endfor %}
         </tbody>
