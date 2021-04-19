@@ -29,6 +29,7 @@
                 <td>Units In Lot</td>
                 <td>Total Federal Cost</td>
                 <td>Cost Per Share</td>
+                <td>{{tmv|tmvLabel}}</td>
             </tr>
         </thead>
         <tbody>
@@ -37,12 +38,21 @@
             <tr>
                 <td>{{lot.draftHolding.security.ticker}}</td>
                 <td>{{lot.number}}</td>
-                <td>{{lot.units}}</td>
-                <td>{{lot.unitsAvailable}}</td>
-                <td>{{lot.totalFederalCost}}</td>
-                <td>{{lot.cps}}</td>
+                <td>{{lot.units|floatformat:2}}</td>
+                <td>{{lot.unitsAvailable|floatformat:2}}</td>
+                <td>{{lot.totalFederalCost|floatformat:2}}</td>
+                <td>{{lot.cps|floatformat:2}}</td>
             </tr>
             {% endfor %}
+            <tr>
+                <td>Total</td>
+                <td></td>
+                <td>{{setOfLots|getTotalUnits}}</td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td>{{setOfLots|getTotalMV}}</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
