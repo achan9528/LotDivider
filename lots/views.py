@@ -205,6 +205,7 @@ def newProposal(request, projectID, portfolioID, accountID):
                 numberOfPortfolios=request.POST["numberOfPortfolios"],
                 holdingsDict=holdingsDict,
             )
+            
             # return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
             return redirect('/proposals/' + str(proposal2.id) + "/")
     else:
@@ -220,7 +221,9 @@ def viewProposal(request, proposalID):
                 'proposalSummary': proposalSummary,
                 'test': {'test': 'test','test2':{'test3':'test3'}},
             }
+            LotQueries.test(proposalID)
             return render(request, 'proposal.html', context)
+
     else:
         messages.error(request, 'Please login!')
         return redirect('/')

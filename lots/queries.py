@@ -25,3 +25,13 @@ def getDraftLotCPS(proposal):
                     totalFederalCost=F("referencedLot__totalFederalCost"))
                 returnDict[draftPortfolio, draftAccount].append(draftLots)
     return returnDict
+
+
+def test(proposalID):
+    allLotsInProposal = list(DraftTaxLot.objects.filter(
+        draftHolding__draftAccount__draftPortfolio__proposal = proposalID
+        ).values_list('referencedLot',flat=True).distinct())
+    print(allLotsInProposal)
+
+    mergedTable = TaxLot.objects.prefetch_related('draftTaxLotsRelated').filter(pk__in=allLotsInProposal)
+    
