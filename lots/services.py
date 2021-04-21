@@ -205,11 +205,6 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
 
 
 def splitPortfolio2(projectID, accountID, method, numberOfPortfolios, holdingsDict):
-    # create new dictionaries which will represent each draft portfolio/account
-    # put them into a queue so that way you know which order to put extra shares
-    # into
-    usedLots = {}
-    remainingLots = {}
     portfolios = []
     
     for i in range(int(numberOfPortfolios)):
@@ -234,6 +229,7 @@ def splitPortfolio2(projectID, accountID, method, numberOfPortfolios, holdingsDi
             }
 
         i= 0
+        fractionIter = 0
         lotIter = 0
         fractionFromLast = 0
         totalSharesDistributed = 0
@@ -245,31 +241,35 @@ def splitPortfolio2(projectID, accountID, method, numberOfPortfolios, holdingsDi
             for p in portfolios:
                 p[ticker][currentLotKey] = 0
             sharesToDistributeInLot = lot.units
-
+            if sharesToDistributeInLot > int(targetShares) - totalSharesDistributed:
+                sharesToDistributeInLot = int(targetShares) - totalSharesDistributed
+            
             remainderShares = sharesToDistributeInLot % len(portfolios)
+
             sharesToEach = (sharesToDistributeInLot - remainderShares) / len(portfolios)
             if sharesToEach > 0:
                 for p in portfolios:
                     p[ticker][currentLotKey] = sharesToEach
-            print(ticker)
-            print(sharesToDistributeInLot)
+            
             while remainderShares > 0:
                 if remainderShares < 1:
                     if fractionFromLast > 0:
-                        if remainderShares < (1-fractionFromLast):
-                            portfolios[i][ticker][currentLotKey] += remainderShares
+                        whatIsNeeded = (1-fractionFromLast)
+                        if remainderShares < whatIsNeeded:
+                            portfolios[fractionIter][ticker][currentLotKey] += remainderShares
                             fractionFromLast += remainderShares 
                             remainderShares -= remainderShares
                         else:
-                            portfolios[i][ticker][currentLotKey] += (1 - fractionFromLast)
-                            remainderShares -= fractionFromLast
+                            portfolios[fractionIter][ticker][currentLotKey] += whatIsNeeded
+                            remainderShares -= whatIsNeeded
                             fractionFromLast = 0
-                            if i + 1 >= len(portfolios):
-                                i = 0
+                            if fractionIter + 1 >= len(portfolios):
+                                fractionIter = 0
                             else:
-                                i += 1
+                                fractionIter += 1
+                            print(f"changed fractionIter to {fractionIter}")
                     else:
-                        portfolios[i][ticker][currentLotKey] += remainderShares
+                        portfolios[fractionIter][ticker][currentLotKey] += remainderShares
                         fractionFromLast = remainderShares
                         remainderShares -= remainderShares
                 else:
@@ -281,6 +281,7 @@ def splitPortfolio2(projectID, accountID, method, numberOfPortfolios, holdingsDi
                         i += 1
             totalSharesDistributed += sharesToDistributeInLot
             lotIter += 1
+        
 
 
     proposal = Proposal.objects.create(project=Project.objects.get(id=projectID))
