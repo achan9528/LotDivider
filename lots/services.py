@@ -1,6 +1,7 @@
 from .models import *
 from decimal import Decimal
 from collections import deque
+from django.db.models import F, ExpressionWrapper, DecimalField
 import pandas as pd
 
 def lots(ticker, accountID, number, cusip, units, date, totalFed, totalState):
@@ -137,39 +138,39 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
                 'totalShares': 0,
             }
 
-        remainderShares = 0
+        sharesNeededToMakeCompleteShare = 0
         for lot in tempDict['usedLots']:
             currentLotKey = lot['number']
             for p in portfolioQueue:
                 p[ticker][currentLotKey] = 0
-            sharesToDistribute = lot['units']
+            sharesToDistributeInLot = lot['units']
 
-            while sharesToDistribute > 0:
+            while sharesToDistributeInLot > 0:
 
                 currentPortfolio = portfolioQueue.pop()
 
-                if remainderShares > 0 and remainderShares <= sharesToDistribute:
-                    currentPortfolio[ticker][currentLotKey] += remainderShares
-                    currentPortfolio[ticker]['totalShares'] += remainderShares
-                    sharesToDistribute -= remainderShares
-                    remainderShares -= remainderShares
+                if sharesNeededToMakeCompleteShare > 0 and sharesNeededToMakeCompleteShare <= sharesToDistributeInLot:
+                    currentPortfolio[ticker][currentLotKey] += sharesNeededToMakeCompleteShare
+                    currentPortfolio[ticker]['totalShares'] += sharesNeededToMakeCompleteShare
+                    sharesToDistributeInLot -= sharesNeededToMakeCompleteShare
+                    sharesNeededToMakeCompleteShare -= sharesNeededToMakeCompleteShare
                     portfolioQueue.appendleft(currentPortfolio)
-                elif remainderShares > 0 and remainderShares > sharesToDistribute:
-                    currentPortfolio[ticker][currentLotKey] += sharesToDistribute
-                    currentPortfolio[ticker]['totalShares'] += sharesToDistribute
-                    remainderShares -= sharesToDistribute
-                    sharesToDistribute -= sharesToDistribute
+                elif sharesNeededToMakeCompleteShare > 0 and sharesNeededToMakeCompleteShare > sharesToDistributeInLot:
+                    currentPortfolio[ticker][currentLotKey] += sharesToDistributeInLot
+                    currentPortfolio[ticker]['totalShares'] += sharesToDistributeInLot
+                    sharesNeededToMakeCompleteShare -= sharesToDistributeInLot
+                    sharesToDistributeInLot -= sharesToDistributeInLot
                     portfolioQueue.append(currentPortfolio)
-                elif sharesToDistribute > 1:
+                elif sharesToDistributeInLot > 1:
                     currentPortfolio[ticker][currentLotKey] += 1
                     currentPortfolio[ticker]['totalShares'] += 1
-                    sharesToDistribute -= 1
+                    sharesToDistributeInLot -= 1
                     portfolioQueue.appendleft(currentPortfolio)
                 else:
-                    currentPortfolio[ticker][currentLotKey] += sharesToDistribute
-                    currentPortfolio[ticker]['totalShares'] += sharesToDistribute
-                    remainderShares = 1-sharesToDistribute
-                    sharesToDistribute -= sharesToDistribute
+                    currentPortfolio[ticker][currentLotKey] += sharesToDistributeInLot
+                    currentPortfolio[ticker]['totalShares'] += sharesToDistributeInLot
+                    sharesNeededToMakeCompleteShare = 1-sharesToDistributeInLot
+                    sharesToDistributeInLot -= sharesToDistributeInLot
                     portfolioQueue.append(currentPortfolio)
 
         portfolioQueue.clear()
@@ -177,6 +178,113 @@ def splitPortfolio(projectID, accountID, method, numberOfPortfolios, holdingsDic
     
     proposal = Proposal.objects.create(project=Project.objects.get(id=projectID))
     for portfolio in portfolioQueue:
+        draftPortfolio = DraftPortfolio.objects.create(
+            proposal = proposal,
+        )
+        draftAccount = DraftAccount.objects.create(
+            draftPortfolio = draftPortfolio,
+        )
+        for ticker in portfolio.keys():
+            draftHolding = DraftHolding.objects.create(
+                    security = Security.objects.get(ticker=ticker),
+                    draftAccount = draftAccount
+                )
+            for lot, shares in portfolio[ticker].items():
+                if lot != 'totalCost' and lot != 'totalShares':
+                    DraftTaxLot.objects.create(
+                        number = lot,
+                        units = shares,
+                        draftHolding = draftHolding,
+                        referencedLot = TaxLot.objects.get(number=lot),
+                    )
+
+    # print(portfolioQueue)
+    proposal.name = "Proposal " + str(proposal.id)
+    proposal.save()
+    return proposal
+
+
+def splitPortfolio2(projectID, accountID, method, numberOfPortfolios, holdingsDict):
+    # create new dictionaries which will represent each draft portfolio/account
+    # put them into a queue so that way you know which order to put extra shares
+    # into
+    usedLots = {}
+    remainingLots = {}
+    portfolios = []
+    
+    for i in range(int(numberOfPortfolios)):
+        portfolios.append({})
+
+    for ticker, targetShares in holdingsDict.items():
+        lots = Holding.objects.get(
+                account=accountID,
+                security=Security.objects.get(ticker=ticker),
+            ).taxLots.all().annotate(cps=ExpressionWrapper(F('totalFederalCost')/F('units'),output_field = DecimalField(decimal_places=4)))
+
+        lots = lots.order_by('-cps', 'acquisitionDate')
+        # if method=="HIFO":
+        #     lots.order_by('-cps','acquisitionDate')
+        # elif method=="LIFO":
+        #     lots.order_by('acquisitionDate')
+
+        for p in portfolios:
+            p[ticker] = {
+                'totalCost': 0,
+                'totalShares': 0,
+            }
+
+        i= 0
+        lotIter = 0
+        fractionFromLast = 0
+        totalSharesDistributed = 0
+        
+        while totalSharesDistributed < int(targetShares):
+            lot = lots[lotIter]
+            print(lot)
+            currentLotKey = lot.number
+            for p in portfolios:
+                p[ticker][currentLotKey] = 0
+            sharesToDistributeInLot = lot.units
+
+            remainderShares = sharesToDistributeInLot % len(portfolios)
+            sharesToEach = (sharesToDistributeInLot - remainderShares) / len(portfolios)
+            if sharesToEach > 0:
+                for p in portfolios:
+                    p[ticker][currentLotKey] = sharesToEach
+            print(ticker)
+            print(sharesToDistributeInLot)
+            while remainderShares > 0:
+                if remainderShares < 1:
+                    if fractionFromLast > 0:
+                        if remainderShares < (1-fractionFromLast):
+                            portfolios[i][ticker][currentLotKey] += remainderShares
+                            fractionFromLast += remainderShares 
+                            remainderShares -= remainderShares
+                        else:
+                            portfolios[i][ticker][currentLotKey] += (1 - fractionFromLast)
+                            remainderShares -= fractionFromLast
+                            fractionFromLast = 0
+                            if i + 1 >= len(portfolios):
+                                i = 0
+                            else:
+                                i += 1
+                    else:
+                        portfolios[i][ticker][currentLotKey] += remainderShares
+                        fractionFromLast = remainderShares
+                        remainderShares -= remainderShares
+                else:
+                    portfolios[i][ticker][currentLotKey] += 1
+                    remainderShares -= 1
+                    if i + 1 >= len(portfolios):
+                        i = 0
+                    else:
+                        i += 1
+            totalSharesDistributed += sharesToDistributeInLot
+            lotIter += 1
+
+
+    proposal = Proposal.objects.create(project=Project.objects.get(id=projectID))
+    for portfolio in portfolios:
         draftPortfolio = DraftPortfolio.objects.create(
             proposal = proposal,
         )
@@ -236,6 +344,38 @@ def getLots(targetShares, holding, method="HIFO"):
                 "units": targetShares - currentShares
             })
             currentLots.append(temp)
+            currentShares = targetShares
+
+    return {
+        "usedLots": returnLots,
+        "remainingLots": currentLots
+    }
+
+def getLots2(targetShares, holding, method="HIFO"):
+    currentLots = []
+    currentShares = 0
+    returnLots = []
+    targetShares = Decimal(targetShares)
+
+
+
+    i = 0
+    
+    for lot in lots.iterator():
+        while currentShares < targetShares:
+            if lot["units"] <= targetShares - currentShares:
+                currentShares += lot["units"]
+                temp = currentLots.pop()
+                returnLots.append(temp)
+            else:
+                temp = currentLots.pop()
+                temp["units"] = temp["units"] - (targetShares - currentShares)
+                returnLots.append({
+                    "number": temp["number"],
+                    "cps": temp["cps"],
+                    "units": targetShares - currentShares
+                })
+                currentLots.append(temp)
             currentShares = targetShares
 
     return {

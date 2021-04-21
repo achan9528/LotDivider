@@ -25,18 +25,3 @@ def getDraftLotCPS(proposal):
                     totalFederalCost=F("referencedLot__totalFederalCost"))
                 returnDict[draftPortfolio, draftAccount].append(draftLots)
     return returnDict
-
-# def getDraftTotals(proposal):
-#     totalsDict = {}
-
-#     for draftPortfolio in proposal.draftPortfolios.all():
-#         for draftAccount in draftPortfolio.draftAccounts.all():
-#             for draftHolding in draftAccount.draftHoldings.all():
-#                 totalUnits = draftHolding.draftTaxLots.aggregate(totalUnits=Sum('units'))
-
-#                 closingPrice = yf.download([draftHolding.security.ticker], '2021-4-15')['Adj Close'][0]
-#                 lotsWithMV = draftHolding.draftTaxLots.annotate(mv=F('units') * closingPrice)
-#                 totalMV = lotsWithMV.aggregate(totalMV=Sum('mv'))
-#                 totalsDict[draftPortfolio.id, draftAccount.id, draftHolding.security.ticker] = (totalUnits, totalMV)
-
-#     return totalsDict

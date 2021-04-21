@@ -191,7 +191,14 @@ def newProposal(request, projectID, portfolioID, accountID):
                 if holding.security.ticker in request.POST and len(request.POST[holding.security.ticker]) > 0:
                     if Decimal(request.POST[holding.security.ticker]) > 0:
                         holdingsDict[holding.security.ticker] = request.POST[holding.security.ticker]
-            proposal = LotService.splitPortfolio(
+            # proposal = LotService.splitPortfolio(
+            #     projectID=projectID,
+            #     accountID=accountID,
+            #     method=request.POST["method"],
+            #     numberOfPortfolios=request.POST["numberOfPortfolios"],
+            #     holdingsDict=holdingsDict,
+            # )
+            proposal2 = LotService.splitPortfolio2(
                 projectID=projectID,
                 accountID=accountID,
                 method=request.POST["method"],
@@ -199,7 +206,7 @@ def newProposal(request, projectID, portfolioID, accountID):
                 holdingsDict=holdingsDict,
             )
             # return redirect('/projects/' + str(projectID) + '/portfolios/' + str(portfolioID) + '/accounts/' + str(accountID) + '/proposals/new')
-            return redirect('/proposals/' + str(proposal.id) + "/")
+            return redirect('/proposals/' + str(proposal2.id) + "/")
     else:
         messages.error(request, 'Please login!')
         return redirect('/')

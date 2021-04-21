@@ -35,7 +35,7 @@ def getTotalMV(setOfLots):
         today)['Adj Close'][0]
     setOfLots = setOfLots.annotate(mv=F('units') * closingPrice)
     return list(setOfLots.aggregate(totalMV=Sum('mv')).values())[0]
-    
+
 @register.filter
 def getDraftPortfolioTotalMV(allLotSets):
     today = date.today().strftime("%Y-%m-%d")
