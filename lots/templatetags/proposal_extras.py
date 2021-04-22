@@ -55,11 +55,7 @@ def getDraftPortfolioTotalMV(allLotSets):
         totalMV += list(annotatedSet.aggregate(Sum('mv')).values())[0]
     return totalMV
 
-# @register.filter
-# def mergeLotSets(proposal):
-# for each holding, you have to get all of lots referenced.
-# then you have to merge on the referenced lot number
-# display the results
-
-
-# uniqueReferenceLotNumbers = proposal.select_related('draftTaxLots').distinct('referencedLot')
+@register.filter
+def getUnitsFromDraftLot(lot, draftAccount):
+    print(lot.draftTaxLotsRelated.get(draftHolding__draftAccount = draftAccount).units)
+    return lot.draftTaxLotsRelated.get(draftHolding__draftAccount = draftAccount).units
