@@ -33,5 +33,11 @@ def test(proposalID):
         ).values_list('referencedLot',flat=True).distinct())
 
     mergedTable = TaxLot.objects.prefetch_related('draftTaxLotsRelated').filter(pk__in=allLotsInProposal)
-    # mergedTable = mergedTable.filter(draftTaxLotsReferenced__draftHolding__draftAccount__draftPortfolio__proposal = proposalID)
+    
+    test = Security.objects.prefetch_related('relatedDraftHoldings__draftAccount__draftPortfolio__proposal')
+    test = test.filter(
+        relatedDraftHoldings__draftAccount__draftPortfolio__proposal = proposalID
+        )
+    
+
     return mergedTable

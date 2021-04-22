@@ -59,3 +59,11 @@ def getDraftPortfolioTotalMV(allLotSets):
 def getUnitsFromDraftLot(lot, draftAccount):
     print(lot.draftTaxLotsRelated.get(draftHolding__draftAccount = draftAccount).units)
     return lot.draftTaxLotsRelated.get(draftHolding__draftAccount = draftAccount).units
+
+@register.inclusion_tag('proposalTable.html')
+def proposalTable(proposal, results):
+    context = {
+        'proposal': proposal,
+        'test': results,
+    }
+    return context
