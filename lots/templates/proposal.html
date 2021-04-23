@@ -18,7 +18,9 @@
     <a href="/projects/{{proposal.project.id}}/">Back</a>
     <a href="/dashboard/">Dashboard</a>
     <a href="/logout/">Logout</a>
-    {% proposalTable proposal test %}
+    <!-- the results are a list of securities with the matching portfolios -->
+    {% proposalTable proposal results %}
+
 </body>
 
 </html>

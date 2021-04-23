@@ -219,7 +219,7 @@ def viewProposal(request, proposalID):
             context = {
                 'proposal': Proposal.objects.get(id=proposalID),
                 'proposalSummary': proposalSummary,
-                'test': LotQueries.test(proposalID),
+                'results': LotQueries.test(proposalID),
             }
             
             return render(request, 'proposal.html', context)

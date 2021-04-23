@@ -6,18 +6,14 @@
             <th>Referenced Lot</th>
             {% for draftPortfolio in proposal.draftPortfolios.all %}
             <th>Units in Draft Account {{draftPortfolio.draftAccounts.first.id}}</th>
+            <th>Total MV in Holding</th>
             {% endfor %}
         </tr>
     </thead>
     <tbody>
-        {% for lot in test %}
-        <tr>
-            <td>{{lot.holding.security.ticker}}</td>
-            <td>{{lot.number}}</td>
-            {% for draftPortfolio in proposal.draftPortfolios.all %}
-                <td>{{lot|getUnitsFromDraftLot:draftPortfolio.draftAccounts.first}}</td>
-            {% endfor %}
-        </tr>
+        {% for ticker in tickers %}
+        {% proposalTableRow results ticker closingPrices closingDate %}
         {% endfor %}
+        <!-- for each ticker, create a row, pass in a ticker to the filter -->
     </tbody>
 </table>

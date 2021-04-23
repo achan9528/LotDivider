@@ -1,0 +1,9 @@
+{% load proposal_extras %}
+<tr>
+    <td>{{ticker}}</td>
+    <td></td>
+    {% for result in results %}
+    <td>{{result.totalUnits}}</td>
+    <td>{{result.totalMV}}</td>
+    {% endfor %}
+</tr>

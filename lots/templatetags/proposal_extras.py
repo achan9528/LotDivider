@@ -1,4 +1,4 @@
-from django.db.models import Sum, F
+from django.db.models import Sum, F, ExpressionWrapper, DecimalField
 from django import template
 from datetime import date
 import yfinance as yf
@@ -62,8 +62,29 @@ def getUnitsFromDraftLot(lot, draftAccount):
 
 @register.inclusion_tag('proposalTable.html')
 def proposalTable(proposal, results):
+    d = date.today().strftime("%Y-%m-%d")
+    tickers = list(results.values_list('ticker', flat=True).distinct())
+    closingPrices = yf.download(tickers, d)['Adj Close']
+    print(d)
+
     context = {
         'proposal': proposal,
-        'test': results,
+        'results': results,
+        'tickers': tickers,
+        'closingPrices': closingPrices,
+        'closingDate': d,
+    }
+    return context
+
+@register.inclusion_tag('proposalTableRow.html')
+def proposalTableRow(results, ticker, closingPrices, closingDate):
+    temp = results.filter(ticker=ticker).annotate(mv=F('relatedDraftHoldings__draftTaxLots__units')*closingPrices[ticker][closingDate])
+    totals = temp.values('relatedDraftHoldings__draftAccount__draftPortfolio').annotate(
+        totalMV=Sum('mv'),
+        totalUnits=Sum('relatedDraftHoldings__draftTaxLots__units')
+        ).order_by('-relatedDraftHoldings__draftAccount__draftPortfolio__id').filter(ticker=ticker)
+    context = {
+        'ticker': ticker,
+        'results': totals
     }
     return context

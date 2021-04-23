@@ -28,16 +28,16 @@ def getDraftLotCPS(proposal):
 
 
 def test(proposalID):
-    allLotsInProposal = list(DraftTaxLot.objects.filter(
-        draftHolding__draftAccount__draftPortfolio__proposal = proposalID
-        ).values_list('referencedLot',flat=True).distinct())
+    # allLotsInProposal = list(DraftTaxLot.objects.filter(
+    #     draftHolding__draftAccount__draftPortfolio__proposal = proposalID
+    #     ).values_list('referencedLot',flat=True).distinct())
 
-    mergedTable = TaxLot.objects.prefetch_related('draftTaxLotsRelated').filter(pk__in=allLotsInProposal)
+    # mergedTable = TaxLot.objects.prefetch_related('draftTaxLotsRelated').filter(pk__in=allLotsInProposal)
     
-    test = Security.objects.prefetch_related('relatedDraftHoldings__draftAccount__draftPortfolio__proposal')
-    test = test.filter(
+    results = Security.objects.prefetch_related('relatedDraftHoldings__draftAccount__draftPortfolio__proposal')
+    results = results.filter(
         relatedDraftHoldings__draftAccount__draftPortfolio__proposal = proposalID
         )
-    
+    print(results)
 
-    return mergedTable
+    return results
