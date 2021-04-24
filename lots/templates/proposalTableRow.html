@@ -2,8 +2,28 @@
 <tr>
     <td>{{ticker}}</td>
     <td></td>
-    {% for result in results %}
-    <td>{{result.totalUnits}}</td>
-    <td>{{result.totalMV}}</td>
+    {% for summaryTotal in summaryTotals %}
+    <td>{{summaryTotal.totalUnits}}</td>
+    <td></td>
+    <td>{{summaryTotal.totalMV}}</td>
     {% endfor %}
 </tr>
+<tr>
+    <th>Ticker</th>
+    <th>Referenced Lot</th>
+    {% for draftPortfolio in proposal.draftPortfolios.all %}
+    <th>Units in Draft Portfolio {{draftPortfolio.id}}</th>
+    <th>Cost Per Share</th>
+    <th>MV of Lot</th>
+    {% endfor %}
+</tr>
+{% for lot in proposalLots %}
+<tr>
+    <td>{{lot.holding.security.ticker}}</td>
+    <td>{{lot.number}}</td>
+    {% for draftPortfolio in proposal.draftPortfolios.all %}
+    {% proposalTableColumn lot draftPortfolio %}
+    {% endfor %}
+</tr>
+{% endfor %}
+

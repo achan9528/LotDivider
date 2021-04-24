@@ -215,11 +215,10 @@ def newProposal(request, projectID, portfolioID, accountID):
 def viewProposal(request, proposalID):
     if validUser(request):
         if request.method == 'GET':
-            proposalSummary = LotQueries.summarizeProposal(Proposal.objects.get(id=proposalID))
             context = {
                 'proposal': Proposal.objects.get(id=proposalID),
-                'proposalSummary': proposalSummary,
-                'results': LotQueries.test(proposalID),
+                'summaryTotals': LotQueries.summaryTotals(proposalID),
+                'proposalLots': LotQueries.proposalLots(proposalID),
             }
             
             return render(request, 'proposal.html', context)
