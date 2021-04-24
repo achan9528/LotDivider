@@ -35,10 +35,14 @@ def proposalTable(proposal, summaryTotals, proposalLots):
 
 @register.inclusion_tag('proposalTableRow.html')
 def proposalTableRow(summaryTotals, ticker, closingPrices, closingDate, proposal, proposalLots):
-    totals = summaryTotals.filter(ticker=ticker).annotate(mv=F('relatedDraftHoldings__draftTaxLots__units')*closingPrices[ticker][0])
+    totals = summaryTotals.filter(ticker=ticker).annotate(
+            mv=F('relatedDraftHoldings__draftTaxLots__units')*closingPrices[ticker][0],
+            cost=(F('relatedDraftHoldings__draftTaxLots__referencedLot__totalFederalCost')/F('relatedDraftHoldings__draftTaxLots__referencedLot__units'))*F('relatedDraftHoldings__draftTaxLots__units')
+        )
     totals = totals.values('relatedDraftHoldings__draftAccount__draftPortfolio').annotate(
         totalMV=Sum('mv'),
-        totalUnits=Sum('relatedDraftHoldings__draftTaxLots__units')
+        totalUnits=Sum('relatedDraftHoldings__draftTaxLots__units'),
+        totalCost=Sum('cost')
         )
     lots = list(
         proposalLots.filter(

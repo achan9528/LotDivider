@@ -5,7 +5,7 @@
     <td></td>
     {% for summaryTotal in summaryTotals %}
     <td>{{summaryTotal.totalUnits|floatformat:4|intcomma}}</td>
-    <td></td>
+    <td>{{summaryTotal.totalCost|floatformat:4|intcomma}}</td>
     <td>${{summaryTotal.totalMV|floatformat:2|intcomma}}</td>
     {% endfor %}
 </tr>
