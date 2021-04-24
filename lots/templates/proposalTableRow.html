@@ -1,11 +1,12 @@
 {% load proposal_extras %}
+{% load humanize %}
 <tr>
     <td>{{ticker}}</td>
     <td></td>
     {% for summaryTotal in summaryTotals %}
-    <td>{{summaryTotal.totalUnits}}</td>
+    <td>{{summaryTotal.totalUnits|floatformat:4|intcomma}}</td>
     <td></td>
-    <td>{{summaryTotal.totalMV}}</td>
+    <td>${{summaryTotal.totalMV|floatformat:2|intcomma}}</td>
     {% endfor %}
 </tr>
 <tr>
@@ -17,12 +18,12 @@
     <th>MV of Lot</th>
     {% endfor %}
 </tr>
-{% for lot in proposalLots %}
+{% for lot in lots %}
 <tr>
-    <td>{{lot.holding.security.ticker}}</td>
-    <td>{{lot.number}}</td>
+    <td>{{ticker}}</td>
+    <td>{{lot}}</td>
     {% for draftPortfolio in proposal.draftPortfolios.all %}
-    {% proposalTableColumn lot draftPortfolio %}
+    {% proposalTableColumn lot draftPortfolio proposalLots %}
     {% endfor %}
 </tr>
 {% endfor %}

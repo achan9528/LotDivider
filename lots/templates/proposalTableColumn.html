@@ -1,4 +1,5 @@
 {% load proposal_extras %}
-<td>{{draftTaxLot.units}}</td>
-<td>cps</td>
-<td>mv</td>
+{% load humanize %}
+<td>{{draftTaxLot.units|floatformat:4}}</td>
+<td>${{draftTaxLot.cps|floatformat:2|intcomma}}</td>
+<td>${{draftTaxLot.mv|floatformat:2|intcomma}}</td>

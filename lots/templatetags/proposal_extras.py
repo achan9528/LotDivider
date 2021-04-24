@@ -1,4 +1,4 @@
-from django.db.models import Sum, F, ExpressionWrapper, DecimalField
+from django.db.models import Sum, F, ExpressionWrapper, DecimalField, Case, When
 from django import template
 from datetime import date
 import yfinance as yf
@@ -11,53 +11,11 @@ def getType(something):
     return(type(something))
 
 @register.filter
-def tmvLabel(title):
-    today = date.today().strftime("%Y-%m-%d")
-    return f"Total Market Value as of {today}"
-
-@register.filter
-def getTotalUnits(setOfLots):
-    return list(setOfLots.aggregate(
-        totalUnits=Sum('units')
-        ).values())[0]
-
-@register.filter
-def getTotalAvailableUnits(setOfLots):
-    return list(setOfLots.aggregate(
-        totalUnits=Sum('unitsAvailable')
-        ).values())[0]
-
-@register.filter
-def getTotalMV(setOfLots):
-    today = date.today().strftime("%Y-%m-%d")
-    closingPrice = yf.download(
-        [setOfLots.first().referencedLot.holding.security.ticker],
-        today)['Adj Close'][0]
-    setOfLots = setOfLots.annotate(mv=F('units') * closingPrice)
-    return list(setOfLots.aggregate(totalMV=Sum('mv')).values())[0]
-
-@register.filter
-def getDraftPortfolioTotalMV(allLotSets):
-    today = date.today().strftime("%Y-%m-%d")
-    totalMV = 0
-    tickers = []
-    for s in allLotSets:
-        tickers.append(
-            s.first().referencedLot.holding.security.ticker
-        )
-    
-    closingPrices = yf.download(tickers, today)['Adj Close']
-    print(closingPrices)
-    for s in allLotSets:
-        annotatedSet = s.annotate(
-            mv = F('units') * closingPrices[s.first().referencedLot.holding.security.ticker][0]
-        )
-        totalMV += list(annotatedSet.aggregate(Sum('mv')).values())[0]
-    return totalMV
-
-@register.filter
-def getUnitsFromDraftLot(draftPortfolio):
-    return lot.draftTaxLotsRelated.get(draftHolding__draftAccount = draftAccount).units
+def monetize(amount):
+    print(type(amount))
+    if type(amount)==None:
+        amount=0
+    return f"${amount}"
 
 @register.inclusion_tag('proposalTable.html')
 def proposalTable(proposal, summaryTotals, proposalLots):
@@ -81,19 +39,36 @@ def proposalTableRow(summaryTotals, ticker, closingPrices, closingDate, proposal
     totals = totals.values('relatedDraftHoldings__draftAccount__draftPortfolio').annotate(
         totalMV=Sum('mv'),
         totalUnits=Sum('relatedDraftHoldings__draftTaxLots__units')
-        ).order_by('-relatedDraftHoldings__draftAccount__draftPortfolio__id').filter(ticker=ticker)
-
+        )
+    lots = list(
+        proposalLots.filter(
+            draftHolding__security__ticker=ticker, 
+            draftHolding__draftAccount__draftPortfolio__proposal=proposal
+            ).values_list('referencedLot__number', flat=True).distinct()
+        )
+    proposalLots = proposalLots.filter(referencedLot__number__in=lots)\
+        .annotate(
+            cps=ExpressionWrapper(
+                    F('referencedLot__totalFederalCost')/F('referencedLot__units'),
+                    output_field=DecimalField(decimal_places=2)
+                ), 
+            mv=ExpressionWrapper(
+                F('units')*closingPrices[ticker][0], 
+                    output_field=DecimalField(decimal_places=2)
+                )
+        )
     context = {
         'ticker': ticker,
         'summaryTotals': totals,
         'proposal': proposal,
         'proposalLots': proposalLots,
+        'lots': lots,
     }
     return context
 
 @register.inclusion_tag('proposalTableColumn.html')
-def proposalTableColumn(lot, draftPortfolio):
+def proposalTableColumn(lot, draftPortfolio, proposalLots):
     context = {
-        'draftTaxLot': lot.draftTaxLotsRelated.get(draftHolding__draftAccount__draftPortfolio=draftPortfolio)
+        'draftTaxLot': proposalLots.get(referencedLot__number=lot,draftHolding__draftAccount__draftPortfolio=draftPortfolio)
     }
     return context
