@@ -6,7 +6,7 @@
     {% for portfolio, total in totals.items %}
     <td></td>
     <td></td>
-    <td>{{total|floatformat:2|intcomma}}</td>
+    <td>${{total|floatformat:2|intcomma}}</td>
     {% endfor %}
 </tr>
 

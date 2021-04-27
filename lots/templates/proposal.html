@@ -1,26 +1,25 @@
+{% extends "base.html" %}
 {% load proposal_extras %}
 {% load humanize %}
-<!DOCTYPE html>
-<html lang="en">
+{% load static %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lot Divider</title>
-</head>
+{% block headerExtras %}
+<script src="{% static 'js/proposalTable.js' %}"></script>
+{% endblock %}
 
-<body>
-
+{% block headings %}
     <h1>Proposal Name: {{ proposal.name }}</h1>
     <h2>Proposal Number: {{ proposal.number }}</h2>
     <a href="/proposals/{{proposal.id}}/edit">Edit</a>
     <a href="/projects/{{proposal.project.id}}/">Back</a>
     <a href="/dashboard/">Dashboard</a>
     <a href="/logout/">Logout</a>
-    <!-- the results are a list of securities with the matching portfolios -->
-    {% proposalTable proposal summaryTotals proposalLots %}
+{% endblock %}
 
-</body>
+{% block body %}
+{% proposalTable proposal summaryTotals proposalLots %}
+{% endblock %}
 
-</html>
+
+
+

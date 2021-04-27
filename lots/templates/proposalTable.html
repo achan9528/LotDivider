@@ -1,7 +1,8 @@
 {% load proposal_extras %}
-<table>
+<table id='table'>
     <thead>
         <tr>
+            <th></th>
             <th>Ticker</th>
             <th>Referenced Lot</th>
             {% for draftPortfolio in proposal.draftPortfolios.all %}
