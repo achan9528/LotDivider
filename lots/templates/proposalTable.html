@@ -15,5 +15,6 @@
         {% for ticker in tickers %}
         {% proposalTableRow summaryTotals ticker closingPrices closingDate proposal proposalLots %}
         {% endfor %}
+        {% proposalTableTotals proposalLots tickers closingPrices closingDate proposal %}
     </tbody>
 </table>

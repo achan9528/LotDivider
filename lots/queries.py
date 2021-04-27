@@ -9,6 +9,7 @@ def summaryTotals(proposalID):
     return summaryTotals
 
 def proposalLots(proposalID):
-    proposalLots = DraftTaxLot.objects.select_related('referencedLot').prefetch_related('draftHolding__draftAccount__draftPortfolio')
+    # proposalLots = DraftTaxLot.objects.filter(draftHolding__draftAccount__draftPortfolio__proposal_id=proposalID).select_related('referencedLot').prefetch_related('draftHolding__draftAccount__draftPortfolio')
+    proposalLots = DraftTaxLot.objects.filter(draftHolding__draftAccount__draftPortfolio__proposal_id=proposalID).select_related('referencedLot').prefetch_related('draftHolding__draftAccount__draftPortfolio')
     return proposalLots
     

@@ -1,0 +1,12 @@
+{% load proposal_extras %}
+{% load humanize %}
+<tr>
+    <td>Totals</td>
+    <td></td>
+    {% for portfolio, total in totals.items %}
+    <td></td>
+    <td></td>
+    <td>{{total|floatformat:2|intcomma}}</td>
+    {% endfor %}
+</tr>
+
