@@ -1,40 +1,33 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {% load static %}
-    <link rel="stylesheet" type="text/css" href="{% static './lots.css'%}">
-    <title>Lot Divider</title>
-</head>
-<body>
-    <h1>Welcome {{user.name}}!</h1>
-    <ul class="navBar">
-        <li><a href="/projects/new/">New Project</a></li>
-        <li><a href="/portfolios/new">Add a Portfolio</a></li>
-        <li><a href="/logout/">Logout</a>
-    </ul>
-    <table>
-        <h2>Your projects</h2>
-        <thead>
-            <tr>
-                <th>Project Number</th>
-                <th>Project Name</th>
-                <th>Link</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for project in projects %}
-            <tr>
-                <td>{{project.id}}</td>
-                <td>{{project.name}}</td>
-                <td>
-                    <a href="/projects/{{project.id}}/">Go</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</body>
-</html>
+{% extends "base.html" %}
+{% block headings %}
+<h1>Welcome {{user.name}}!</h1>
+{% endblock %}
+
+{% block body %}
+<ul class="navBar">
+    <li><a href="/projects/new/">New Project</a></li>
+    <li><a href="/portfolios/new">Add a Portfolio</a></li>
+    <li><a href="/logout/">Logout</a>
+</ul>
+<table>
+    <h2>Your projects</h2>
+    <thead>
+        <tr>
+            <th>Project Number</th>
+            <th>Project Name</th>
+            <th>Link</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for project in projects %}
+        <tr>
+            <td>{{project.id}}</td>
+            <td>{{project.name}}</td>
+            <td>
+                <a href="/projects/{{project.id}}/">Go</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
