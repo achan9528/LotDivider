@@ -4,7 +4,11 @@
 {% load static %}
 
 {% block headerExtras %}
-<script src="{% static 'js/proposalTable.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/proposal.css' %}">
+{% endblock %}
+
+{% block footerExtras %}
+<script src="{% static 'js/proposal.js' %}"></script>
 {% endblock %}
 
 {% block headings %}

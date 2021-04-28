@@ -10,7 +10,7 @@
     <td>${{summaryTotal.totalMV|floatformat:2|intcomma}}</td>
     {% endfor %}
 </tr>
-<tr class="tableLotHeader">
+<tr class="tableLotHeader collapsed">
     <td></td>
     <th>Ticker</th>
     <th>Referenced Lot</th>
@@ -21,7 +21,7 @@
     {% endfor %}
 </tr>
 {% for lot in lots %}
-<tr class="tableLot">
+<tr class="tableLot collapsed">
     <td></td>
     <td>{{ticker}}</td>
     <td>{{lot}}</td>
