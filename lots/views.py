@@ -173,6 +173,16 @@ def accountView(request, projectID, portfolioID, accountID):
         messages.error(request, 'Please login!')
         return redirect('/')
 
+def newProposal2(request):
+    if validUser(request):
+        if request.method == 'GET':
+            print(request.GET)
+            print(Project.objects.get(id=request.GET['projectID']))
+            context = {
+                'project': Project.objects.get(id=request.GET['projectID'])
+            }
+            return render(request,'newProposal.html', context)
+
 def newProposal(request, projectID, portfolioID, accountID):
     if validUser(request):
         if request.method == 'GET':

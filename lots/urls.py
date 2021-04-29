@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
@@ -8,6 +8,7 @@ urlpatterns = [
     path('dashboard/', views.dashboard),
     path('projects/new/', views.newProject),
     path('projects/<int:id>/', views.projectDashboard),
+    path('proposals/new/', views.newProposal2),
     path('projects/<int:projectID>/portfolios/', views.selectPortfolio),
     path('projects/<int:projectID>/portfolios/<int:portfolioID>/', views.portfolioView),
     path('projects/<int:projectID>/portfolios/<int:portfolioID>/accounts/<int:accountID>/', views.accountView),
