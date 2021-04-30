@@ -31,19 +31,22 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'lots',
-    'rest_framework',
-    'LotDividerAPI.apps.LotdividerapiConfig',
-    'django.contrib.admin',
+    'corsheaders', # extra, allows Cross Origin Requests
+    'django.contrib.admin', 
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize',
+    'django.contrib.humanize', # extra, for template filters
+    'lots', # Lot Divider program
+    'rest_framework', # django rest framework
+    'LotDividerAPI.apps.LotdividerapiConfig', # configuration file
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware', # allows cross origin requests
+    'django.middleware.common.CommonMiddleware', # allows cross origin requests
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,6 +54,17 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+]
+
+# "whitelist" of approved origins from which requests can come from
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+]
+
+# CSRF tokens are separated from CORS in Django, therefore this is to
+# allow CSRF tokens 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:3000',
 ]
 
 ROOT_URLCONF = 'LotDivider.urls'
