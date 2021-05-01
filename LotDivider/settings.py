@@ -135,9 +135,9 @@ AUTH_USER_MODEL = 'LotDividerAPI.User'
 # authentication method in the LoginSerializer to be made so that it
 # checks only ceratin fields
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'username'
 ACCOUNT_USERNAME_REQUIRED = False
 ACCOUNT_EMAIL_REQUIRED = True
-
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators

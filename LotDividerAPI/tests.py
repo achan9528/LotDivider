@@ -117,13 +117,28 @@ class ProjectTestCase(test.APITestCase):
             password = pwHash,
         )
 
+        pwHash = make_password('test5678')
+        get_user_model().objects.create(
+            name =  'Chris',
+            email = 'test2@test.com',
+            alias = 'cc',
+            password = pwHash,
+        )
+        
+        project = Project.objects.create(name= 'testProject')
+        project.owners.add(get_user_model().objects.first())
+
+        
+    def test_setUpData(self):
+        self.assertEqual(Project.objects.first().owners.all()[0].name,'Alex')
+
     def test_createProject(self):
         url = ('http://localhost:8000/api/projects/')
         data = {
-            'name': 'testProject',
+            'name': 'testProject2',
             'owners': [
                 {
-                    'pk': 1,
+                    'id': 1,
                     'name': 'Alex',
                     'email': 'test@test.com',
                     'alias': 'ac',
@@ -136,4 +151,16 @@ class ProjectTestCase(test.APITestCase):
         self.assertEqual(Project.objects.first().name, 'testProject')
         self.assertEqual(Project.objects.first().owners.all()[0].name, 'Alex')
 
-    
+    def test_listProjects(self):
+        url = ('http://localhost:8000/api/projects/')
+        self.client.login(email='test@test.com', password='test1234')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data),1)
+
+    def test_listProjectsDifferentUser(self):
+        url = ('http://localhost:8000/api/projects/')
+        self.client.login(email='test2@test.com', password='test5678')
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data),0)
