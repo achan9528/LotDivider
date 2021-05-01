@@ -1,32 +1,29 @@
 from LotDividerAPI.models import User
-from LotDividerAPI.serializers import RegisterSerializer
+from LotDividerAPI.serializers import CreateProjectSerializer
 from django.http import HttpResponseBadRequest
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics
+from rest_framework import status, generics, permissions
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_auth.registration import views as restAuthViews
-import bcrypt
+from rest_framework.generics import CreateAPIView
 
-# # view to register and create a new client
-# class RegisterView(generics.CreateAPIView):
-#     # these variables below to the generic API view are
-#     # overwritten here for customization
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
-
-# # view to login 
-# class LoginView(generics.RetrieveAPIView):
-#     queryset = User.objects.all()
-#     serializer_class = UserSerializer
+# Login and Registration views are through the django-rest-auth
+# library (see github)
 
 class TestView(APIView):
     renderer_classes = [JSONRenderer]
+    permission_classes = [permissions.IsAuthenticated]
+
     def get(self, request, format=None):
         content = {
             'welcome': 'hello!'
         }
         return Response(content)
+
+class CreateProjectView(CreateAPIView):
+    serializer_class = CreateProjectSerializer
+
 
 

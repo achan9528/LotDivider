@@ -4,13 +4,24 @@ from allauth.account.adapter import get_adapter
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-
+from .models import Project
+from rest_auth.serializers import UserDetailsSerializer
 
 # get_user_model() must be used instead of regular
 # User model because the custom User model in models.py
 # is being used instead of default Django one. This is
 # shown in AUTH_USER_MODEL in settings.py
 User = get_user_model()
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = [
+            'pk',
+            'name',
+            'email',
+            'alias',
+        ]
 
 class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -177,3 +188,22 @@ class LoginSerializer(serializers.ModelSerializer):
 
         attrs['user'] = user
         return attrs
+
+class CreateProjectSerializer(serializers.ModelSerializer):
+    owners = UserSerializer(many=True)
+    class Meta:
+        model = Project
+        fields = [
+            'name',
+            'owners',
+        ]
+
+    def create(self, validated_data):
+        owners = validated_data.pop('owners')
+        project = Project.objects.create(**validated_data)
+        for owner in owners:
+            project.owners.add(
+                get_user_model().objects.get(
+                    email=owner['email']))
+        project.save()
+        return project
