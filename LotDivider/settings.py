@@ -41,8 +41,24 @@ INSTALLED_APPS = [
     'django.contrib.humanize', # extra, for template filters
     'lots', # Lot Divider program
     'rest_framework', # django rest framework
+    'rest_framework.authtoken', # django rest framework (authentication token)
+    'rest_auth', # django rest authentication
+    'django.contrib.sites', # django-rest-auth registration
+    'allauth', # django-rest-auth registration
+    'allauth.account', # django-rest-auth registration
+    'rest_auth.registration', # django-rest-auth registration
     'LotDividerAPI.apps.LotdividerapiConfig', # configuration file
 ]
+
+SITE_ID = 1 # django-rest-auth registration
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'LotDividerAPI.serializers.RegisterSerializer',
+}
+
+REST_AUTH_SERIALIZERS = {
+    'LOGIN_SERIALIZER': 'LotDividerAPI.serializers.LoginSerializer'
+}
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', # allows cross origin requests
@@ -85,6 +101,18 @@ TEMPLATES = [
     },
 ]
 
+
+# from allAuth documentation
+AUTHENTICATION_BACKENDS = [
+    # Needed to login by username in Django admin, regardless of `allauth`
+    'django.contrib.auth.backends.ModelBackend',
+
+    # `allauth` specific authentication methods, such as login by e-mail
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+
+
 WSGI_APPLICATION = 'LotDivider.wsgi.application'
 
 
@@ -97,6 +125,18 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+
+# since we are using a custom User class, we have to change this setting
+# this tells Django to look here for the User class in regards to auth
+AUTH_USER_MODEL = 'LotDividerAPI.User'
+
+# django-allauth configurable setting. This allows the
+# authentication method in the LoginSerializer to be made so that it
+# checks only ceratin fields
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
 
 
 # Password validation
