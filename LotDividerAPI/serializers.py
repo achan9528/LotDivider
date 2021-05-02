@@ -4,7 +4,7 @@ from allauth.account.adapter import get_adapter
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from .models import Project
+from .models import Project, ProductType
 from rest_auth.serializers import UserDetailsSerializer
 
 # get_user_model() must be used instead of regular
@@ -85,7 +85,6 @@ class RegisterSerializer(serializers.ModelSerializer):
             password=make_password(self.validated_data.get('password')),
         )
         return user
-
 
 class LoginSerializer(serializers.ModelSerializer):
     class Meta:
@@ -207,3 +206,14 @@ class CreateProjectSerializer(serializers.ModelSerializer):
                     email=owner['email']))
         project.save()
         return project
+
+class ProductTypeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductType
+        fields = [
+            'name',
+            'fractionalLotsAllowed'
+        ]
+
+    # def create(self, validated_data):
+

@@ -1,7 +1,7 @@
 from rest_framework import test
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from .models import Project
+from .models import Project, ProductType
 from django.contrib.auth.hashers import make_password
 
 # Register View Test
@@ -164,3 +164,60 @@ class ProjectTestCase(test.APITestCase):
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data),0)
+
+class ProductTypeTestCase(test.APITestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pwHash = make_password('test1234')
+        get_user_model().objects.create(
+            name='test',
+            alias='test',
+            email='test@test.com',
+            password=pwHash,
+        )
+        ProductType.objects.create(
+            name = 'stock',
+            fractionalLotsAllowed = True
+        )
+
+    def test_addProductType(self):
+        url = 'http://localhost:8000/api/product-types/'
+        data = {
+            'name': 'mutual fund',
+            'fractionalLotsAllowed': 'false',
+        }
+        self.client.login(email='test@test.com', password='test1234')
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+    
+    def test_getProductTypes(self):
+        url = 'http://localhost:8000/api/product-types/'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(len(response.data), 1)
+        print(response.content)
+
+    def test_getProductType1(self):
+        url = 'http://localhost:8000/api/product-types/1/'
+        response = self.client.get(url, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.content)
+
+    def test_putProductType1(self):
+        url = 'http://localhost:8000/api/product-types/1/'
+        data = {
+            'name': 'equity',
+            'fractionalLotsAllowed': 'true'
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.content)
+
+    def test_patchProductType1(self):
+        url = 'http://localhost:8000/api/product-types/1/'
+        data = {
+            'fractionalLotsAllowed': 'false'
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.content)
