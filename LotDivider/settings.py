@@ -56,10 +56,6 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'LotDividerAPI.serializers.RegisterSerializer',
 }
 
-# REST_AUTH_SERIALIZERS = {
-#     'LOGIN_SERIALIZER': 'LotDividerAPI.serializers.LoginSerializer'
-# }
-
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', # allows cross origin requests
     'django.middleware.common.CommonMiddleware', # allows cross origin requests
