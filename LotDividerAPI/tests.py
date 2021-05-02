@@ -1,7 +1,7 @@
 from rest_framework import test
 from rest_framework import status
 from django.contrib.auth import get_user_model
-from .models import Project, ProductType
+from LotDividerAPI import models as apiModels
 from django.contrib.auth.hashers import make_password
 
 # Register View Test
@@ -125,12 +125,12 @@ class ProjectTestCase(test.APITestCase):
             password = pwHash,
         )
         
-        project = Project.objects.create(name= 'testProject')
+        project = apiModels.Project.objects.create(name= 'testProject')
         project.owners.add(get_user_model().objects.first())
 
         
     def test_setUpData(self):
-        self.assertEqual(Project.objects.first().owners.all()[0].name,'Alex')
+        self.assertEqual(apiModels.Project.objects.first().owners.all()[0].name,'Alex')
 
     def test_createProject(self):
         url = ('http://localhost:8000/api/projects/')
@@ -148,8 +148,8 @@ class ProjectTestCase(test.APITestCase):
         self.client.login(email='test@test.com', password='test1234')
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Project.objects.first().name, 'testProject')
-        self.assertEqual(Project.objects.first().owners.all()[0].name, 'Alex')
+        self.assertEqual(apiModels.Project.objects.first().name, 'testProject')
+        self.assertEqual(apiModels.Project.objects.first().owners.all()[0].name, 'Alex')
 
     def test_listProjects(self):
         url = ('http://localhost:8000/api/projects/')
@@ -175,7 +175,7 @@ class ProductTypeTestCase(test.APITestCase):
             email='test@test.com',
             password=pwHash,
         )
-        ProductType.objects.create(
+        apiModels.ProductType.objects.create(
             name = 'stock',
             fractionalLotsAllowed = True
         )
@@ -219,5 +219,49 @@ class ProductTypeTestCase(test.APITestCase):
             'fractionalLotsAllowed': 'false'
         }
         response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.content)
+
+class SecurityTestCase(test.APITestCase):
+    @classmethod
+    def setUpTestData(self):
+        # set up test user
+        pwHash = make_password('test1234')
+        get_user_model().objects.create(
+            name =  'Alex',
+            email = 'test@test.com',
+            alias = 'ac',
+            password = pwHash,
+        )
+
+        apiModels.ProductType.objects.create(
+            name="stock",
+            fractionalLotsAllowed=False
+        )
+
+        apiModels.Security.objects.create(
+            name="amc",
+            ticker="AMC",
+            cusip="cusip",
+            productType=apiModels.ProductType.objects.get(
+                name="stock"
+            ),
+        )
+
+    def test_createSecurity(self):
+        url = "http://localhost:8000/api/securities/"
+        data = {
+            "name": "microsoft",
+            "ticker": "MSFT",
+            "cusip": "test",
+            "productType": 1
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(apiModels.Security.objects.get(ticker="MSFT").name,"microsoft")
+
+    def test_listSecurities(self):
+        url = "http://localhost:8000/api/securities/"
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         print(response.content)

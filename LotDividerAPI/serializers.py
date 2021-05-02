@@ -4,7 +4,7 @@ from allauth.account.adapter import get_adapter
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from django.utils.translation import ugettext_lazy as _
-from .models import Project, ProductType
+from LotDividerAPI import models as apiModels
 from rest_auth.serializers import UserDetailsSerializer
 
 # get_user_model() must be used instead of regular
@@ -191,7 +191,7 @@ class LoginSerializer(serializers.ModelSerializer):
 class CreateProjectSerializer(serializers.ModelSerializer):
     owners = UserSerializer(many=True)
     class Meta:
-        model = Project
+        model = apiModels.Project
         fields = [
             'name',
             'owners',
@@ -199,7 +199,7 @@ class CreateProjectSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         owners = validated_data.pop('owners')
-        project = Project.objects.create(**validated_data)
+        project = apiModels.Project.objects.create(**validated_data)
         for owner in owners:
             project.owners.add(
                 get_user_model().objects.get(
@@ -209,7 +209,7 @@ class CreateProjectSerializer(serializers.ModelSerializer):
 
 class ProductTypeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ProductType
+        model = apiModels.ProductType
         fields = [
             'name',
             'fractionalLotsAllowed'
@@ -217,3 +217,19 @@ class ProductTypeSerializer(serializers.ModelSerializer):
 
     # def create(self, validated_data):
 
+class SecuritySerializer(serializers.ModelSerializer):
+    productType = serializers.PrimaryKeyRelatedField(
+        queryset=apiModels.ProductType.objects.all(),
+        )
+    class Meta:
+        model = apiModels.Security
+        fields = [
+            'name',
+            'ticker',
+            'cusip',
+            'productType',
+        ]
+
+    def create(self, validated_data):
+        security = apiModels.Security.objects.create(**validated_data)
+        return security

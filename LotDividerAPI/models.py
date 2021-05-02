@@ -41,3 +41,15 @@ class ProductType(models.Model):
 
     def __str__(self):
         return (f"Product Type Name: {self.name}, Fractional Lots Allowed: {self.fractionalLotsAllowed}")
+
+class Security(models.Model):
+    ticker = models.CharField(max_length=50)
+    cusip = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
+    number = models.CharField(max_length=50, default=uuid.uuid4)
+    productType = models.ForeignKey(ProductType, related_name="relatedSecurities", on_delete=models.CASCADE)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return (f"Security Ticker {self.ticker}, Security Name: {self.name}, Security Product Type: {self.productType.name}")

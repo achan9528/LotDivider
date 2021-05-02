@@ -7,7 +7,7 @@ from rest_framework import status, generics, permissions, mixins
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_auth.registration import views as restAuthViews
-from .models import Project, ProductType
+from LotDividerAPI import models as apiModels
 
 # Login and Registration views are through the django-rest-auth
 # library (see github)
@@ -25,7 +25,7 @@ class TestView(APIView):
 class ProjectView(generics.GenericAPIView, 
                 mixins.CreateModelMixin, 
                 mixins.ListModelMixin):
-    queryset = Project.objects.all()
+    queryset = apiModels.Project.objects.all()
     serializer_class = serializers.CreateProjectSerializer
 
     def get_queryset(self):
@@ -41,7 +41,7 @@ class ProjectView(generics.GenericAPIView,
 class ListProductTypesView(generics.GenericAPIView,
                 mixins.CreateModelMixin,
                 mixins.ListModelMixin):
-    queryset = ProductType.objects.all()
+    queryset = apiModels.ProductType.objects.all()
     serializer_class = serializers.ProductTypeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # renderer_classes = [JSONRenderer]
@@ -53,12 +53,15 @@ class ListProductTypesView(generics.GenericAPIView,
         return self.create(request)
         
 class ProductTypeView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = ProductType.objects.all()
+    queryset = apiModels.ProductType.objects.all()
     lookup_field = 'id'
     serializer_class = serializers.ProductTypeSerializer
-    
+
     def get_queryset(self):
-        return ProductType.objects.filter(id=self.kwargs['id'])
-    
+        return apiModels.ProductType.objects.filter(id=self.kwargs['id'])
+
+class ListSecurityTypesView(generics.ListCreateAPIView):
+    queryset = apiModels.Security.objects.all()
+    serializer_class = serializers.SecuritySerializer
     
 
