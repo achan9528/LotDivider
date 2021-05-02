@@ -21,7 +21,6 @@ class RegisterTestCase(test.APITestCase):
         response = self.client.post(self.url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(len(get_user_model().objects.filter(name="Alex")),1)
-        
 
     def test_registerUser_noEmail(self):
         data = {
@@ -92,6 +91,7 @@ class LoginTestCase(test.APITestCase):
         }
         response = self.client.post(url, data, format='json')
         self.assertEquals(len(get_user_model().objects.all()), 1)
+        print(response.data)
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         
     def test_403Error(self):
@@ -136,20 +136,11 @@ class ProjectTestCase(test.APITestCase):
         url = ('http://localhost:8000/api/projects/')
         data = {
             'name': 'testProject2',
-            'owners': [
-                {
-                    'id': 1,
-                    'name': 'Alex',
-                    'email': 'test@test.com',
-                    'alias': 'ac',
-                }
-            ],
+            'owners': [1],
         }
         self.client.login(email='test@test.com', password='test1234')
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(apiModels.Project.objects.first().name, 'testProject')
-        self.assertEqual(apiModels.Project.objects.first().owners.all()[0].name, 'Alex')
 
     def test_listProjects(self):
         url = ('http://localhost:8000/api/projects/')
@@ -264,4 +255,38 @@ class SecurityTestCase(test.APITestCase):
         url = "http://localhost:8000/api/securities/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        print(response.content)
+
+    def test_getSecurity(self):
+        url = "http://localhost:8000/api/securities/1/"
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data['ticker'],'AMC')
+
+    def test_putSecurity1(self):
+        # PUT operation to first overwrite first entry in db
+        url = "http://localhost:8000/api/securities/1/"
+        data = {
+            "name": "facebook",
+            "ticker": "FB",
+            "cusip": "test",
+            "productType": 1
+        }
+        response = self.client.put(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # GET operation to check
+        response = self.client.get(url)
+        self.assertEqual(response.data['ticker'],'FB')
+
+    def test_patchSecurity1(self):
+        # PUT operation to first overwrite first entry in db
+        url = "http://localhost:8000/api/securities/1/"
+        data = {
+            "cusip": "bookface",
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        # GET operation to check
+        response = self.client.get(url)
+        self.assertEqual(response.data['cusip'],'bookface')
+    
+# class PortfolioTestCase(test.APITestCase):

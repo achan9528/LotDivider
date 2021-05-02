@@ -64,4 +64,11 @@ class ListSecurityTypesView(generics.ListCreateAPIView):
     queryset = apiModels.Security.objects.all()
     serializer_class = serializers.SecuritySerializer
     
+class SecurityView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = apiModels.Security.objects.all()
+    lookup_field = 'id'
+    serializer_class = serializers.SecuritySerializer
 
+    def get_queryset(self):
+        return apiModels.Security.objects.filter(id=self.kwargs['id'])    
+    

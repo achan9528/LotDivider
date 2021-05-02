@@ -56,9 +56,9 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'LotDividerAPI.serializers.RegisterSerializer',
 }
 
-REST_AUTH_SERIALIZERS = {
-    'LOGIN_SERIALIZER': 'LotDividerAPI.serializers.LoginSerializer'
-}
+# REST_AUTH_SERIALIZERS = {
+#     'LOGIN_SERIALIZER': 'LotDividerAPI.serializers.LoginSerializer'
+# }
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware', # allows cross origin requests
@@ -106,7 +106,6 @@ TEMPLATES = [
 AUTHENTICATION_BACKENDS = [
     # Needed to login by username in Django admin, regardless of `allauth`
     'django.contrib.auth.backends.ModelBackend',
-
     # `allauth` specific authentication methods, such as login by e-mail
     'allauth.account.auth_backends.AuthenticationBackend',
 ]

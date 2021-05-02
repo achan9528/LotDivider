@@ -189,7 +189,10 @@ class LoginSerializer(serializers.ModelSerializer):
         return attrs
 
 class CreateProjectSerializer(serializers.ModelSerializer):
-    owners = UserSerializer(many=True)
+    owners = serializers.PrimaryKeyRelatedField(
+        many=True,
+        queryset=apiModels.User.objects.all()
+    )
     class Meta:
         model = apiModels.Project
         fields = [
@@ -201,9 +204,7 @@ class CreateProjectSerializer(serializers.ModelSerializer):
         owners = validated_data.pop('owners')
         project = apiModels.Project.objects.create(**validated_data)
         for owner in owners:
-            project.owners.add(
-                get_user_model().objects.get(
-                    email=owner['email']))
+            project.owners.add(owner)
         project.save()
         return project
 

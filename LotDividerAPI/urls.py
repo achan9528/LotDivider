@@ -8,5 +8,8 @@ urlpatterns = [
     path('api/projects/', views.ProjectView.as_view()),
     path('api/product-types/', views.ListProductTypesView.as_view()),
     path('api/product-types/<int:id>/', views.ProductTypeView.as_view()),
-    path('api/securities/', views.ListSecurityTypesView.as_view())
+    path('api/securities/', views.ListSecurityTypesView.as_view()),
+    path('api/securities/<int:id>/', views.SecurityView.as_view()),
+    # path('api/portfolios/', views.ListPortfolioView.as_view()),
+    # path('api/portfolios/<int:id>', views.PortfolioView_asView())
 ]

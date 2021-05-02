@@ -5,14 +5,17 @@ import uuid
 class User(AbstractUser):
     name = models.CharField(max_length=255)
     alias = models.CharField(max_length=255)
-    email = models.CharField(max_length=255)
-    username = models.CharField(max_length=255, default=uuid.uuid4)
+    email = models.CharField(max_length=255, unique=True)
+    username = models.CharField(max_length=255, default=uuid.uuid4,
+                unique=True)
     password = models.CharField(max_length=255)
     number = models.CharField(max_length=50, default=uuid.uuid4)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
     # objects = UserManager()
 
+    USERNAME_FIELD='email'
+    REQUIRED_FIELDS=['name', 'alias']
     # projects 
 
     def __str__(self):
@@ -53,3 +56,15 @@ class Security(models.Model):
 
     def __str__(self):
         return (f"Security Ticker {self.ticker}, Security Name: {self.name}, Security Product Type: {self.productType.name}")
+
+class Portfolio(models.Model):
+    name = models.CharField(max_length=50)
+    number = models.CharField(max_length=50, default=uuid.uuid4)
+    owner = models.ForeignKey(User, related_name="relatedPortfolios", on_delete=models.CASCADE)
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+    # accounts
+
+    def __str__(self):
+        return (f"Portfolio Name: {self.name}, Portfolio Number: {self.number}")
