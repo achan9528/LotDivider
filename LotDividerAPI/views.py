@@ -72,3 +72,14 @@ class SecurityView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return apiModels.Security.objects.filter(id=self.kwargs['id'])    
     
+class ListClientView(generics.ListCreateAPIView):
+    queryset = apiModels.Client.objects.all()
+    serializer_class = serializers.ClientSerializer
+
+class ClientView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = apiModels.Client.objects.all()
+    serializer_class = serializers.ClientSerializer
+    lookup_field = 'id'
+
+    def get_queryset(self):
+        return apiModels.Client.objects.filter(id=self.kwargs['id'])

@@ -289,4 +289,40 @@ class SecurityTestCase(test.APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.data['cusip'],'bookface')
     
-# class PortfolioTestCase(test.APITestCase):
+class ClientTestCase(test.APITestCase):
+    @classmethod
+    def setUpTestData(self):
+        apiModels.Client.objects.create(
+            name='testClient'
+        )
+
+    def test_createClient(self):
+        url = "http://localhost:8000/api/clients/"
+        data = {
+            "name": "testClient2",
+        }
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code , status.HTTP_201_CREATED)
+        response = self.client.get(url)
+        self.assertEqual(len(response.data), 2)
+
+    def test_putClient(self):
+        url = "http://localhost:8000/api/clients/1/"
+        data = {
+            "name": "testClientNameChange",
+        }
+        response = self.client.put(url, data, format='json')
+        print(response.data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        response = self.client.get(url)
+        self.assertEqual(response.data['id'], 1)
+
+    def test_patchClient(self):
+        url = "http://localhost:8000/api/clients/1/"
+        data = {
+            "name": "testClientNameChange",
+        }
+        response = self.client.patch(url, data, format='json')
+        self.assertEqual(response.status_code , status.HTTP_200_OK)
+        response = self.client.get(url)
+        self.assertEqual(response.data['id'], 1)

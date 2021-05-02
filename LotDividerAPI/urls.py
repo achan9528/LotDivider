@@ -10,6 +10,9 @@ urlpatterns = [
     path('api/product-types/<int:id>/', views.ProductTypeView.as_view()),
     path('api/securities/', views.ListSecurityTypesView.as_view()),
     path('api/securities/<int:id>/', views.SecurityView.as_view()),
+    path('api/clients/', views.ListClientView.as_view()),
+    path('api/clients/<int:id>/', views.ClientView.as_view()),
     # path('api/portfolios/', views.ListPortfolioView.as_view()),
-    # path('api/portfolios/<int:id>', views.PortfolioView_asView())
+    # path('api/portfolios/<int:id>', views.PortfolioView_asView()),
+
 ]

@@ -86,6 +86,14 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
+class ClientSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = apiModels.Client
+        fields = [
+            'id',
+            'name',
+        ]
+
 class CreateProjectSerializer(serializers.ModelSerializer):
     owners = serializers.PrimaryKeyRelatedField(
         many=True,
