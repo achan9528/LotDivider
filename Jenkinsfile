@@ -3,8 +3,8 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'coverage run manage.py test LotDividerAPI'
-                sh 'coverage report'
+                sh 'python --version'
+                sh 'python manage.py test LotDividerAPI'
             }
         }
     }
