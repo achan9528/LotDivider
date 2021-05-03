@@ -3,11 +3,10 @@ pipeline {
     stages {
         stage('build') {
             steps {
-                sh 'echo $PWD'
-                sh 'cd /Users/achan/Desktop/dojo/python_myenvironments'
-                sh 'source djangoPy3Env/bin/activate'
-                sh 'cd ~/Desktop/LotDivider'
-                sh 'python --version'
+                sh 'export WORKSPACE=`pwd`'
+                sh 'virtualenv venv'
+                sh 'source venv/bin/activate'
+                sh 'pip install -r requirements.txt'
                 sh 'python manage.py test LotDividerAPI'
             }
         }
