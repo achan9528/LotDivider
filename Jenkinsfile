@@ -3,6 +3,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
+                sh 'echo $PWD'
                 sh 'cd /Desktop/dojo/python/my_environments; source djangoPy3Env/bin/activate;'
                 sh 'cd ~/Desktop/LotDivider'
                 sh 'python --version'
