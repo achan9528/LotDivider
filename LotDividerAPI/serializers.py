@@ -125,9 +125,11 @@ class ProductTypeSerializer(serializers.ModelSerializer):
     # def create(self, validated_data):
 
 class SecuritySerializer(serializers.ModelSerializer):
-    productType = serializers.PrimaryKeyRelatedField(
-        queryset=apiModels.ProductType.objects.all(),
-        )
+    # productType = serializers.PrimaryKeyRelatedField(
+    #     queryset=apiModels.ProductType.objects.all(),
+    #     required=False
+    #     )
+    productType = ProductTypeSerializer()
     class Meta:
         model = apiModels.Security
         fields = [
@@ -140,3 +142,4 @@ class SecuritySerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         security = apiModels.Security.objects.create(**validated_data)
         return security
+

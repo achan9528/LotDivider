@@ -1,5 +1,9 @@
 from django.urls import path, include
 from LotDividerAPI import views
+from rest_framework import routers
+
+# router = routers.DefaultRouter()
+# router.register(r'portfolios', views.PortfolioViewSet)
 
 urlpatterns = [
     path('api/welcome/', views.TestView.as_view()),
@@ -12,6 +16,7 @@ urlpatterns = [
     path('api/securities/<int:id>/', views.SecurityView.as_view()),
     path('api/clients/', views.ListClientView.as_view()),
     path('api/clients/<int:id>/', views.ClientView.as_view()),
+    # path('api/', include(router.urls)),
     # path('api/portfolios/', views.ListPortfolioView.as_view()),
     # path('api/portfolios/<int:id>', views.PortfolioView_asView()),
 

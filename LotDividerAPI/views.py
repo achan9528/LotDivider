@@ -77,9 +77,11 @@ class ListClientView(generics.ListCreateAPIView):
     serializer_class = serializers.ClientSerializer
 
 class ClientView(generics.RetrieveUpdateDestroyAPIView):
+
     queryset = apiModels.Client.objects.all()
     serializer_class = serializers.ClientSerializer
     lookup_field = 'id'
 
     def get_queryset(self):
         return apiModels.Client.objects.filter(id=self.kwargs['id'])
+

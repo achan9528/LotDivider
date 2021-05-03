@@ -6,3 +6,4 @@ db.sqlite3
 toDo.txt
 chromedriver
 .gitignore
+Jenkinsfile

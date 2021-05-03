@@ -66,14 +66,16 @@ class Security(models.Model):
     def __str__(self):
         return (f"Security Ticker {self.ticker}, Security Name: {self.name}, Security Product Type: {self.productType.name}")
 
-class Portfolio(models.Model):
-    name = models.CharField(max_length=50)
-    number = models.CharField(max_length=50, default=uuid.uuid4)
-    owners = models.ManyToManyField(Client, related_name="relatedPortfolios")
-    createdAt = models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
+# class Portfolio(models.Model):
+#     name = models.CharField(max_length=50)
+#     number = models.CharField(max_length=50, default=uuid.uuid4)
+#     uploadedBy = models.ForeignKey(User, related_name="relatedPortfolios", on_delete=models.CASCADE)
+#     createdAt = models.DateTimeField(auto_now_add=True)
+#     updatedAt = models.DateTimeField(auto_now=True)
 
-    # accounts
+#     # accounts
+#     # holdings
+#     # taxLots
 
-    def __str__(self):
-        return (f"Portfolio Name: {self.name}, Portfolio Number: {self.number}")
+#     def __str__(self):
+#         return (f"Portfolio Name: {self.name}, Portfolio Number: {self.number}")

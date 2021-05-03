@@ -251,10 +251,22 @@ class SecurityTestCase(test.APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(apiModels.Security.objects.get(ticker="MSFT").name,"microsoft")
 
+    def test_createSecurityNoProductType(self):
+        url = "http://localhost:8000/api/securities/"
+        data = {
+            "name": "microsoft",
+            "ticker": "MSFT",
+            "cusip": "test",
+        }
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(apiModels.Security.objects.get(ticker="MSFT").name,"microsoft")
+
     def test_listSecurities(self):
         url = "http://localhost:8000/api/securities/"
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+        print(response.content)
 
     def test_getSecurity(self):
         url = "http://localhost:8000/api/securities/1/"
