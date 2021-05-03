@@ -3,6 +3,7 @@ pipeline {
     stages {
         stage('build') {
             steps {
+                sh '#!/bin/bash'
                 sh 'export WORKSPACE=`pwd`'
                 sh 'virtualenv venv'
                 sh 'source venv/bin/activate'
