@@ -124,12 +124,26 @@ class ProductTypeSerializer(serializers.ModelSerializer):
 
     # def create(self, validated_data):
 
-class SecuritySerializer(serializers.ModelSerializer):
-    # productType = serializers.PrimaryKeyRelatedField(
-    #     queryset=apiModels.ProductType.objects.all(),
-    #     required=False
-    #     )
+class ListCreateSecuritySerializer(serializers.ModelSerializer):
     productType = ProductTypeSerializer()
+    class Meta:
+        model = apiModels.Security
+        fields = [
+            'name',
+            'ticker',
+            'cusip',
+            'productType',
+        ]
+
+    def create(self, validated_data):
+        security = apiModels.Security.objects.create(**validated_data)
+        return security
+
+class SecuritySerializer(serializers.ModelSerializer):
+    productType = serializers.PrimaryKeyRelatedField(
+        queryset=apiModels.ProductType.objects.all(),
+        required=False
+        )
     class Meta:
         model = apiModels.Security
         fields = [

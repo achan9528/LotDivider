@@ -74,13 +74,13 @@ class LoginTestCase(test.APITestCase):
     @classmethod
     def setUpTestData(cls):
         pwHash = make_password('test1234')
-        get_user_model().objects.create(
+        user = get_user_model().objects.create(
             name =  'Alex',
             email = 'test@test.com',
             alias = 'ac',
             password = pwHash,
         )
-        print(get_user_model().objects.all())
+        user.save()
 
     # base functionality case
     def test_loginUser(self):
@@ -90,6 +90,7 @@ class LoginTestCase(test.APITestCase):
             'password': 'test1234',
         }
         response = self.client.post(url, data, format='json')
+        print(get_user_model().objects.all())
         self.assertEquals(len(get_user_model().objects.all()), 1)
         print(response.data)
         self.assertEquals(response.status_code, status.HTTP_200_OK)
@@ -100,7 +101,8 @@ class LoginTestCase(test.APITestCase):
         self.assertEquals(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_200WithToken(self):
-        self.client.login(email='test@test.com', password='test1234')
+        response = self.client.login(email='test@test.com', password='test1234')
+        self.assertEqual(response, True)
         response = self.client.get('http://localhost:8000/api/welcome/')
         self.assertEquals(response.status_code, status.HTTP_200_OK)
         self.assertEquals(response.data, {'welcome': 'hello!'})
@@ -127,7 +129,6 @@ class ProjectTestCase(test.APITestCase):
         
         project = apiModels.Project.objects.create(name= 'testProject')
         project.owners.add(get_user_model().objects.first())
-
         
     def test_setUpData(self):
         self.assertEqual(apiModels.Project.objects.first().owners.all()[0].name,'Alex')
@@ -136,7 +137,9 @@ class ProjectTestCase(test.APITestCase):
         url = ('http://localhost:8000/api/projects/')
         data = {
             'name': 'testProject2',
-            'owners': [1],
+            'owners': [
+                1,
+            ],
         }
         self.client.login(email='test@test.com', password='test1234')
         response = self.client.post(url, data, format='json')

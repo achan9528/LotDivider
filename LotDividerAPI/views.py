@@ -22,9 +22,7 @@ class TestView(APIView):
         }
         return Response(content)
 
-class ProjectView(generics.GenericAPIView, 
-                mixins.CreateModelMixin, 
-                mixins.ListModelMixin):
+class ProjectView(generics.ListCreateAPIView):
     queryset = apiModels.Project.objects.all()
     serializer_class = serializers.CreateProjectSerializer
 
@@ -32,37 +30,24 @@ class ProjectView(generics.GenericAPIView,
         user = self.request.user
         return user.projects.all()
 
-    def get(self, request, format=None):
-        return self.list(request)
-
-    def post(self, request, format=None):
-        return self.create(request)
-
-class ListProductTypesView(generics.GenericAPIView,
-                mixins.CreateModelMixin,
-                mixins.ListModelMixin):
+class ListProductTypesView(generics.ListCreateAPIView):
     queryset = apiModels.ProductType.objects.all()
     serializer_class = serializers.ProductTypeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     # renderer_classes = [JSONRenderer]
-
-    def get(self, request, format=None):
-        return self.list(request)
-
-    def post(self, request, format=None):
-        return self.create(request)
         
 class ProductTypeView(generics.RetrieveUpdateDestroyAPIView):
     queryset = apiModels.ProductType.objects.all()
     lookup_field = 'id'
     serializer_class = serializers.ProductTypeSerializer
+    permission_classes = [permissions.AllowAny]
 
     def get_queryset(self):
         return apiModels.ProductType.objects.filter(id=self.kwargs['id'])
 
 class ListSecurityTypesView(generics.ListCreateAPIView):
     queryset = apiModels.Security.objects.all()
-    serializer_class = serializers.SecuritySerializer
+    serializer_class = serializers.ListCreateSecuritySerializer
     
 class SecurityView(generics.RetrieveUpdateDestroyAPIView):
     queryset = apiModels.Security.objects.all()

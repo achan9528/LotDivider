@@ -116,10 +116,16 @@ WSGI_APPLICATION = 'LotDivider.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'db',
+        'USER': 'root',
+        'PASSWORD': 'root',
+        'HOST': '0.0.0.0',
+        'PORT': '3306',
     }
 }
+
+
 
 
 # since we are using a custom User class, we have to change this setting
