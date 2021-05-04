@@ -25,10 +25,15 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
+      # Set Up Python and activate
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3
+
       # Build stack
       - name: Build Stack
         run: docker-compose up -d
       
       # Test
-      - name: Test
+      - name: Set up Python and Test
         run: python manage.py test LotDividerAPI
