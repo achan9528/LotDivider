@@ -27,8 +27,8 @@ jobs:
 
       # Build stack
       - name: Build Stack
-      - run: docker-compose up -d
+        run: docker-compose up -d
       
       # Test
       - name: Test
-      - run: python manage.py test LotDividerAPI
+        run: python manage.py test LotDividerAPI
