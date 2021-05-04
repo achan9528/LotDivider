@@ -24,18 +24,28 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
-
-      # Set Up Python and activate
-      - uses: actions/setup-python@v2
-        with:
-          python-version: 3
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt
       
       # Build stack
       - name: Build Stack
         run: docker-compose up -d
+      
+      
+      # Set Up Python and activate
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3
+      
+      # run virtual env
+      - name: Start virtual environment (python 3)
+        run: |
+          python3 -m pip install --user virtualenv
+          python3 -m venv env
+          source env/bin/activate
+      
+      # Install Dependencies
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      
       
       # Test
       - name: Set up Python and Test
