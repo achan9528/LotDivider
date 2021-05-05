@@ -27,26 +27,29 @@ jobs:
         with:
           python-version: 3
 
+      # run virtual env
+      - name: Start virtual environment (python 3)
+        run: |
+          python3 -m pip install --user virtualenv
+
+      - name: Install virtual environment
+        run: python3 -m venv env
+        
+      - name: run virtual environment
+        run: source env/bin/activate
+
+
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it      
       - uses: actions/checkout@v2
           
-      # # run virtual env
-      # - name: Start virtual environment (python 3)
-      #   run: |
-      #     python3 -m pip install --user virtualenv
 
-      # - name: Install virtual environment
-      #   run: python3 -m venv env
-        
-      # - name: run virtual environment
-      #   run: source env/bin/activate
       
-      # Build stack
-      - name: Build Stack
-        run: docker-compose up -d
+      # # Build stack
+      # - name: Build Stack
+      #   run: docker-compose up -d
       
-      - name: test
-        run: docker-compose run web python manage.py test
+      # - name: test
+      #   run: docker-compose run web python manage.py test
       # # Install Dependencies
       # - name: Install dependencies
       #   run: pip install -r requirements.txt
