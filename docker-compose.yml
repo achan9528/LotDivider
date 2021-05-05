@@ -20,13 +20,13 @@ services:
             - 8000:8000
         depends_on:
             - db
-    test:
-        build:
-            context: .
-        depends_on: 
-            - db
-            - web
-        command: python manage.py test LotDividerAPI
+    # test:
+    #     build:
+    #         context: .
+    #     depends_on: 
+    #         - db
+    #         - web
+    #     command: python manage.py test LotDividerAPI
 volumes:
     mysql:
     mysql_config:

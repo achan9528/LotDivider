@@ -30,25 +30,27 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it      
       - uses: actions/checkout@v2
           
-      # run virtual env
-      - name: Start virtual environment (python 3)
-        run: |
-          python3 -m pip install --user virtualenv
+      # # run virtual env
+      # - name: Start virtual environment (python 3)
+      #   run: |
+      #     python3 -m pip install --user virtualenv
 
-      - name: Install virtual environment
-        run: python3 -m venv env
+      # - name: Install virtual environment
+      #   run: python3 -m venv env
         
-      - name: run virtual environment
-        run: source env/bin/activate
+      # - name: run virtual environment
+      #   run: source env/bin/activate
       
       # Build stack
       - name: Build Stack
         run: docker-compose up -d
       
-      # Install Dependencies
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: test
+        run: docker-compose run web python manage.py test
+      # # Install Dependencies
+      # - name: Install dependencies
+      #   run: pip install -r requirements.txt
       
-      # Test
-      - name: Set up Python and Test
-        run: python manage.py test LotDividerAPI
+      # # Test
+      # - name: Set up Python and Test
+      #   run: python manage.py test LotDividerAPI
