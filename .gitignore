@@ -7,3 +7,5 @@ toDo.txt
 chromedriver
 .gitignore
 Jenkinsfile
+**/.env
+LotDivider/.env

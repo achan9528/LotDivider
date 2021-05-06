@@ -33,10 +33,13 @@ jobs:
           python3 -m pip install --user virtualenv
 
       - name: Install virtual environment
-        run: python3 -m venv env
+        run: python -m venv env
         
       - name: run virtual environment
         run: source env/bin/activate
+
+      - name: test output
+        run: python hello.py
 
 
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it      

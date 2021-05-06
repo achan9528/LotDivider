@@ -33,7 +33,7 @@ class ProjectView(generics.ListCreateAPIView):
 class ListProductTypesView(generics.ListCreateAPIView):
     queryset = apiModels.ProductType.objects.all()
     serializer_class = serializers.ProductTypeSerializer
-    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    permission_classes = [permissions.AllowAny]
     # renderer_classes = [JSONRenderer]
         
 class ProductTypeView(generics.RetrieveUpdateDestroyAPIView):
