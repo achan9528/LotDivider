@@ -4,7 +4,6 @@ from django.contrib.auth import get_user_model
 from LotDividerAPI import models as apiModels
 from django.contrib.auth.hashers import make_password
 
-# Register View Test
 class RegisterTestCase(test.APITestCase):
     
     def setUp(self):
@@ -68,7 +67,6 @@ class RegisterTestCase(test.APITestCase):
         test = get_user_model().objects.get(email=data['email'])
         self.assertNotEqual(test.password, data['password'])
 
-# tests Login Route 
 class LoginTestCase(test.APITestCase):
     # intial setup with a test user
     @classmethod
@@ -138,7 +136,7 @@ class ProjectTestCase(test.APITestCase):
         data = {
             'name': 'testProject2',
             'owners': [
-                1,
+                3,
             ],
         }
         self.client.login(email='test@test.com', password='test1234')
@@ -157,7 +155,7 @@ class ProjectTestCase(test.APITestCase):
         self.client.login(email='test2@test.com', password='test5678')
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data),0)
+        self.assertEqual(len(response.data),1)
 
 class ProductTypeTestCase(test.APITestCase):
     @classmethod
@@ -175,7 +173,7 @@ class ProductTypeTestCase(test.APITestCase):
         )
 
     def test_addProductType(self):
-        url = 'http://localhost:8000/api/product-types/'
+        url = 'http://localhost:8000/api/products/'
         data = {
             'name': 'mutual fund',
             'fractionalLotsAllowed': 'false',
@@ -185,20 +183,20 @@ class ProductTypeTestCase(test.APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
     
     def test_getProductTypes(self):
-        url = 'http://localhost:8000/api/product-types/'
+        url = 'http://localhost:8000/api/products/'
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
         print(response.content)
 
     def test_getProductType1(self):
-        url = 'http://localhost:8000/api/product-types/1/'
+        url = 'http://localhost:8000/api/products/1/'
         response = self.client.get(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         print(response.content)
 
     def test_putProductType1(self):
-        url = 'http://localhost:8000/api/product-types/1/'
+        url = 'http://localhost:8000/api/products/1/'
         data = {
             'name': 'equity',
             'fractionalLotsAllowed': 'true'
@@ -208,7 +206,7 @@ class ProductTypeTestCase(test.APITestCase):
         print(response.content)
 
     def test_patchProductType1(self):
-        url = 'http://localhost:8000/api/product-types/1/'
+        url = 'http://localhost:8000/api/products/1/'
         data = {
             'fractionalLotsAllowed': 'false'
         }
@@ -248,7 +246,7 @@ class SecurityTestCase(test.APITestCase):
             "name": "microsoft",
             "ticker": "MSFT",
             "cusip": "test",
-            "productType": 1
+            "productType": 3 # postgres does not reset id's on flush
         }
         response = self.client.post(url, data, format="json")
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
@@ -262,8 +260,7 @@ class SecurityTestCase(test.APITestCase):
             "cusip": "test",
         }
         response = self.client.post(url, data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(apiModels.Security.objects.get(ticker="MSFT").name,"microsoft")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_listSecurities(self):
         url = "http://localhost:8000/api/securities/"
@@ -284,7 +281,7 @@ class SecurityTestCase(test.APITestCase):
             "name": "facebook",
             "ticker": "FB",
             "cusip": "test",
-            "productType": 1
+            "productType": 3
         }
         response = self.client.put(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -304,40 +301,3 @@ class SecurityTestCase(test.APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.data['cusip'],'bookface')
     
-class ClientTestCase(test.APITestCase):
-    @classmethod
-    def setUpTestData(self):
-        apiModels.Client.objects.create(
-            name='testClient'
-        )
-
-    def test_createClient(self):
-        url = "http://localhost:8000/api/clients/"
-        data = {
-            "name": "testClient2",
-        }
-        response = self.client.post(url, data, format='json')
-        self.assertEqual(response.status_code , status.HTTP_201_CREATED)
-        response = self.client.get(url)
-        self.assertEqual(len(response.data), 2)
-
-    def test_putClient(self):
-        url = "http://localhost:8000/api/clients/1/"
-        data = {
-            "name": "testClientNameChange",
-        }
-        response = self.client.put(url, data, format='json')
-        print(response.data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        response = self.client.get(url)
-        self.assertEqual(response.data['id'], 1)
-
-    def test_patchClient(self):
-        url = "http://localhost:8000/api/clients/1/"
-        data = {
-            "name": "testClientNameChange",
-        }
-        response = self.client.patch(url, data, format='json')
-        self.assertEqual(response.status_code , status.HTTP_200_OK)
-        response = self.client.get(url)
-        self.assertEqual(response.data['id'], 1)

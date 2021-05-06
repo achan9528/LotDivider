@@ -21,15 +21,6 @@ class User(AbstractUser):
     def __str__(self):
         return f"Name: {self.name}"
 
-class Client(models.Model):
-    name = models.CharField(max_length=255)
-    number = models.CharField(max_length=50, default=uuid.uuid4)
-    createdAt = models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
-    #relatedPortfolios = Portfolio MOdel
-    def __str__(self):
-        return f"Name: {self.name}"
-
 class Project(models.Model):
     owners = models.ManyToManyField(User, related_name="projects")
     name = models.CharField(max_length=50)
@@ -52,7 +43,7 @@ class ProductType(models.Model):
     # lotsAssociated = lots associated with this type of produc type
 
     def __str__(self):
-        return (f"Product Type Name: {self.name}, Fractional Lots Allowed: {self.fractionalLotsAllowed}")
+        return (f"Product Type Name: {self.name}, Fractional Lots Allowed: {self.fractionalLotsAllowed}, ID: {self.id}")
 
 class Security(models.Model):
     ticker = models.CharField(max_length=50)

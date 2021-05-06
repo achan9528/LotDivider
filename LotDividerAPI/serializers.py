@@ -86,15 +86,16 @@ class RegisterSerializer(serializers.ModelSerializer):
         )
         return user
 
-class ClientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = apiModels.Client
+class ReadProjectSerializer(serializers.ModelSerializer):
+    owners = UserDetailsSerializer()
+    class Meta: 
+        model = User
         fields = [
-            'id',
             'name',
+            'owners'
         ]
 
-class CreateProjectSerializer(serializers.ModelSerializer):
+class ProjectSerializer(serializers.ModelSerializer):
     owners = serializers.PrimaryKeyRelatedField(
         many=True,
         queryset=apiModels.User.objects.all()
@@ -124,7 +125,7 @@ class ProductTypeSerializer(serializers.ModelSerializer):
 
     # def create(self, validated_data):
 
-class ListCreateSecuritySerializer(serializers.ModelSerializer):
+class ReadSecuritySerializer(serializers.ModelSerializer):
     productType = ProductTypeSerializer()
     class Meta:
         model = apiModels.Security
@@ -132,17 +133,12 @@ class ListCreateSecuritySerializer(serializers.ModelSerializer):
             'name',
             'ticker',
             'cusip',
-            'productType',
+            'productType'
         ]
-
-    def create(self, validated_data):
-        security = apiModels.Security.objects.create(**validated_data)
-        return security
 
 class SecuritySerializer(serializers.ModelSerializer):
     productType = serializers.PrimaryKeyRelatedField(
         queryset=apiModels.ProductType.objects.all(),
-        required=False
         )
     class Meta:
         model = apiModels.Security

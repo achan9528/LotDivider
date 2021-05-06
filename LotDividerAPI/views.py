@@ -3,7 +3,7 @@ from LotDividerAPI import serializers
 from django.http import HttpResponseBadRequest
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, generics, permissions, mixins
+from rest_framework import status, generics, permissions, mixins, viewsets
 from rest_framework.renderers import JSONRenderer
 from rest_framework.parsers import JSONParser
 from rest_auth.registration import views as restAuthViews
@@ -22,51 +22,26 @@ class TestView(APIView):
         }
         return Response(content)
 
-class ProjectView(generics.ListCreateAPIView):
+class ProjectViewSet(viewsets.ModelViewSet):
     queryset = apiModels.Project.objects.all()
-    serializer_class = serializers.CreateProjectSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        return user.projects.all()
-
-class ListProductTypesView(generics.ListCreateAPIView):
-    queryset = apiModels.ProductType.objects.all()
-    serializer_class = serializers.ProductTypeSerializer
-    permission_classes = [permissions.AllowAny]
-    # renderer_classes = [JSONRenderer]
-        
-class ProductTypeView(generics.RetrieveUpdateDestroyAPIView):
-    queryset = apiModels.ProductType.objects.all()
-    lookup_field = 'id'
-    serializer_class = serializers.ProductTypeSerializer
-    permission_classes = [permissions.AllowAny]
-
-    def get_queryset(self):
-        return apiModels.ProductType.objects.filter(id=self.kwargs['id'])
-
-class ListSecurityTypesView(generics.ListCreateAPIView):
-    queryset = apiModels.Security.objects.all()
-    serializer_class = serializers.ListCreateSecuritySerializer
+    serializer_class = serializers.ProjectSerializer
     
-class SecurityView(generics.RetrieveUpdateDestroyAPIView):
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return serializers.ReadProjectSerializer
+        return serializers.ProjectSerializer
+
+class ProductTypesViewSet(viewsets.ModelViewSet):
+    queryset = apiModels.ProductType.objects.all()
+    serializer_class = serializers.ProductTypeSerializer
+
+class SecurityViewSet(viewsets.ModelViewSet):
     queryset = apiModels.Security.objects.all()
-    lookup_field = 'id'
     serializer_class = serializers.SecuritySerializer
 
-    def get_queryset(self):
-        return apiModels.Security.objects.filter(id=self.kwargs['id'])    
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return serializers.ReadSecuritySerializer
+        return serializers.SecuritySerializer    
     
-class ListClientView(generics.ListCreateAPIView):
-    queryset = apiModels.Client.objects.all()
-    serializer_class = serializers.ClientSerializer
-
-class ClientView(generics.RetrieveUpdateDestroyAPIView):
-
-    queryset = apiModels.Client.objects.all()
-    serializer_class = serializers.ClientSerializer
-    lookup_field = 'id'
-
-    def get_queryset(self):
-        return apiModels.Client.objects.filter(id=self.kwargs['id'])
 
